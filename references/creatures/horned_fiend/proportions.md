@@ -11,7 +11,7 @@
 | Head | skull-like and humanoid, ~0.27 m tall, ~0.20 m wide |
 | Horns | 2 ram-style horns from above the brow: sweep up-out, curl back and down, tips point forward-out. Length along the curve ≈ 1.6 HH (~0.45 m). Ridged, dark, tapering to a sharp tip. Horn span ≈ 2.5 × head width (front view) |
 | Brow | heavy, overhanging ridge; eyes sit deep under it in shadow |
-| Eyes | small, glowing red, set at ~45% of head height from the chin, wide apart, sunken sockets |
+| Eyes | **clearly glowing** red-orange (emissive, small bloom halo, readable at phone size in darkness), small, set at ~45% of head height from the chin, wide apart, sunken sockets |
 | Nose | flat slits only, **NO snout** |
 | Jaw / muzzle | short, protrudes ≤ 0.25 HH beyond the brow in side view, gaunt; mouth wide, slightly open; long needle fangs top and bottom |
 | Ears | small pointed fins swept back (side/three-quarter) |
@@ -22,6 +22,9 @@
 | Legs | digitigrade (backward-bent ankle), cloven hooves/talons |
 | Tail | long and thin, reaches the floor and trails out ~1 m behind, bony spike tip |
 | Skin | dark crimson/charcoal, **wet sheen**, sinew texture; candle underlight + crimson rim |
+
+## Armored variant
+Same body and proportions. The armour sits on top: shoulder pauldrons add about 0.3 HH to shoulder width, the chest plate runs from collarbone to navel, and there are greaves on the shins and vambraces on the forearms. Head, horns and eyes stay uncovered. See `DESIGN-LOCK.md` and `variant-armored.svg`.
 
 ## NOT a dog: hard rules
 - The face is a **flat skull**: brow, cheekbones and chin all in the same plane. No long tapering snout, no wolf/dog nose pad, no floppy or upright dog ears.
