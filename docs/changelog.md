@@ -1,4 +1,5 @@
 # Changelog (newest first)
+- 2026-11-02 · Grok · Testing rule added to the step checklist: plumbing is auto-tested only; the owner opens the lab for careful review once things take shape (each step lists its owner test level and links).
 - 2026-11-02 · Claude · Step 3: mesher (src/kit/mesher.js). Shapes become smooth closed meshes (Surface Nets, vertices on the surface, normals from the shape so no stair-steps, one material group per role) and `meshToBudget` fits a triangle budget. `lab/?kit=test` shows a test blob (blended body, arm, leg, gold belt, eyes, horns) at 7.4k triangles. 15 plain-sentence tests. Not yet seen rendered; thin parts (horn tips) need their own finer grid.
 - 2026-11-02 · Grok · Step 2: shape maths kit in src/kit/sdf.js (rounded box, cone, torus, curve tube for horns and tails, hard and smooth union/subtract/intersect, move/scale/rotate, material roles) with 18 plain-sentence tests.
 - 2026-11-02 · Grok · Step-by-step Claude checklist added (docs/claude-steps.md); CLAUDE.md now points to it.
