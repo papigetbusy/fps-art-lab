@@ -3,6 +3,7 @@
 **Style (owner-locked 2026-11-02):** realistic polished dark gothic for the world, monsters, guns and arenas. **Player models only** in Jet Set Radio style. See `docs/art-direction.md`.
 
 ## Phase 1: Turntable creature lab (CURRENT)
+**Look to lock: gothic candle-lit horror.** Workflow: `WORKFLOW.md` (branch per step, lab test link, nothing to `main` until owner says "approved").
 Goal: lock the shared look (renderer, lights, materials, post) and the shape kit plus self-render loop on ONE creature.
 - Lab page `lab/`: turntable, idle animation, view buttons (front/side/three/top), phone and desktop presets.
 - Kit: `src/kit/sdf.js`, `mesher.js`, `parts.js`, `creatures/horned_fiend.js`.
