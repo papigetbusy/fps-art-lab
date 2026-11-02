@@ -15,7 +15,7 @@ export const PARTS = {
 export const PART_NAMES = Object.keys(PARTS);
 export const buildPart = (name, opts) => { if (!PARTS[name]) throw new Error('unknown part ' + name); return PARTS[name](opts); };
 
-// One Horned Fiend uses these many of each part (claws are part of the hands, so `claw` is not in the list).
+// One Horned Fiend uses these many of each part (claws are part of the hands; plates, band, gem and cloth are for other creatures).
 // The finished monster must fit 8k triangles in total (CLAUDE.md), so the per-part budgets add up to that, not more.
-export const FIEND_LOADOUT = { torso: 1, head: 1, jaw: 1, limb: 2, leg: 2, hand: 2, hoofFoot: 2, horn: 2, tail: 1, armourPlate: 2, trimBand: 1, gem: 1, cloth: 1 };
+export const FIEND_LOADOUT = { torso: 1, head: 1, jaw: 1, limb: 2, leg: 2, hand: 2, hoofFoot: 2, horn: 2, tail: 1 };
 export const loadoutBudget = () => Object.entries(FIEND_LOADOUT).reduce((sum, [name, n]) => sum + n * buildPart(name).budget, 0);
