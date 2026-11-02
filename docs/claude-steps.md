@@ -48,14 +48,14 @@ Rules for every step below (see `WORKFLOW.md`):
 - Look target is **gothic candle-lit horror** (`docs/art-direction.md`): flame-lit pools, deep darkness, haze, wax, soot, embers, crimson rim. No Roblox/toy, no toon/JSR outside the player (Step 10).
 - On "approved": merge, mark ✅, changelog line.
 
-### 🟡 Step 4 (built, provisionally liked — waiting for owner "approved", NOT merged): Candle-lit chapel + picture sheet (Claude's eyes)
+### ✅ Step 4 (approved, merged to main): Candle-lit chapel + picture sheet (Claude's eyes)
 - **Claude does:** turns the lab room into a **candle-lit horror chapel** (candle clusters + 1–2 torches as key lights with soft flicker, haze, wax, soot, embers; look numbers in `src/look/`). Adds `?light=candle|torch|both` and `?flicker=0`. Then `tools/sheet.mjs` (headless renders of `lab/?view=front|side|three|top&ui=0&still=1` → `previews/<name>/sheet.png` + `index.html`, references row, silhouette score).
 - **Auto-test:** tests green; `node tools/sheet.mjs placeholder` writes the sheet; phone preset steady.
 - **Owner test:** **careful human review** of the candle-lit mood (first look at the horror lighting).
 - **Lab test links:** `lab/index.html?light=candle`, `?light=both`, `?view=three&still=1`, plus `previews/placeholder/`.
 - **Paste to Claude:** `Do Step 4 in docs/claude-steps.md on branch claude/step-4-candle-sheet. Don't merge to main. Send me the lab test links.`
 
-### Step 5: Named parts kit (gothic candle-lit horror materials)
+### ✅ Step 5 (approved, merged to main): Named parts kit (gothic candle-lit horror materials)
 - **Branch:** `claude/step-5-parts`, created **from `claude/step-4-candle-sheet`** (Step 4 isn't merged yet; this stacks on its candle-lit chapel). Push this branch only. **Never `main`** until the owner says "approved" (Step 4 merges first, then Step 5).
 - **Owner note (2026-11-02):** likes the candle-lit feel; wants the demon **scary**. Parts must be built to support that: sharp silhouettes, sinew, wet sheen, glowing eyes, cruel horns and claws, no cute/toy rounding.
 - **Claude does:**

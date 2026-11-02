@@ -5,9 +5,9 @@
 | 1 Gothic lab polish | ✅ done, on main |
 | 2 Shape maths | ✅ done, on main |
 | 3 Mesher | ✅ done, on main |
-| 4 Candle-lit chapel + picture sheet | 🟡 built on `claude/step-4-candle-sheet`. Owner likes the feel (provisional). **Awaiting "approved", not merged** |
-| 5 Parts kit | 🟡 built on `claude/step-5-parts` (stacked on Step 4), **awaiting owner "approved"**, not merged. Links in `NEXT.md` |
-| 6–10 | Later, see `docs/claude-steps.md` |
+| 4 Candle-lit chapel + picture sheet | ✅ approved, on main |
+| 5 Parts kit | ✅ approved, on main |
+| 6–10 | Step 6 (Horned Fiend) is next; Grok Bot writes its brief in `NEXT.md`. See `docs/claude-steps.md` |
 
 **Look lock:** gothic candle-lit horror. The demon must be scary. Jet Set Radio style is for the player model only (Step 10).
 
