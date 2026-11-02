@@ -1,0 +1,4 @@
+node_modules/
+.claude-wip.md
+*.log
+.DS_Store

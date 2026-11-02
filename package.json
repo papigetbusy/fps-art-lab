@@ -1,0 +1,9 @@
+{
+  "name": "fps-art-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/",
+    "serve": "npx --yes http-server -p 8080 -c-1 ."
+  }
+}
