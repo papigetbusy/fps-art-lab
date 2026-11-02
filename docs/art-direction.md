@@ -11,6 +11,9 @@ Premium, grounded, cinematic **realistic dark-gothic** shooter for the world, li
 - **Stone and gold:** rough dark chapel stone, aged gold that catches candle glints, wax, iron, rotting cloth.
 - **Not:** Roblox/voxel/toy, bright evenly lit rooms, saturated colours, JSR/graffiti/toon in the world (JSR = player models only, Step 10).
 
+## Locked creature designs
+- **Horned Fiend:** 🔒 `references/creatures/horned_fiend/turnaround.svg` (owner-locked 2026-11-02, `DESIGN-LOCK.md`). The head must match exactly; small detail tweaks only after the silhouette and head match.
+
 ## Primary: realistic dark gothic (everything except player models)
 ### Do
 - **Silhouette first:** every monster and gun reads as a black shape at phone size. Big, medium and small forms in roughly a 60/30/10 split.

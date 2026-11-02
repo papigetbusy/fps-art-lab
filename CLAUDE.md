@@ -1,6 +1,6 @@
 # Claude brief: FPS Art Lab
 
-> **Start here: read `STATUS.md`, then `NEXT.md`.** Do only the current step. Push the step branch only. Never `main` until the owner says "approved". When done, send the lab links listed in `NEXT.md` and stop. (Big picture: `docs/FULL-ROADMAP.md`. Rules: `WORKFLOW.md`. Look lock: gothic candle-lit horror, `docs/art-direction.md`.)
+> **Start here: read `STATUS.md`, then `NEXT.md`.** Do only the current step. Push the step branch only. Never `main` until the owner says "approved". When done, send the lab links listed in `NEXT.md` and stop. 🔒 Locked designs: `references/creatures/*/DESIGN-LOCK.md`, match them exactly. (Big picture: `docs/FULL-ROADMAP.md`. Rules: `WORKFLOW.md`. Look lock: gothic candle-lit horror, `docs/art-direction.md`.)
 
 You are the code half of this project. The owner is not a programmer: explain in plain language, one sentence per choice. He checks work on his iPhone (held sideways) through the GitHub Pages link and the green tick.
 
