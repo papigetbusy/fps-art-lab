@@ -47,14 +47,5 @@ The owner made Crimson Plague (a first-person horde shooter, `papigetbusy/crimso
 - Work only on the current phase in `docs/roadmap.md`.
 - Log every finished piece of work as one plain line at the top of `docs/changelog.md`.
 
-## Your first tasks (in order, each a small push)
-1. Polish the starter lab's realistic gothic look with the placeholder monster: tune ACES exposure and the colour grade, key/rim/hemi lights, soft shadows, a ground with contact shadow/AO, bloom on emissives only, vignette, fog, FXAA, and phone/desktop presets. Files: `src/look/*`, `lab/main.js`. No toon/JSR here.
-2. `src/kit/sdf.js` and its tests ("A sphere's distance is zero on its surface", "Smooth union never cuts inside either shape").
-3. `src/kit/mesher.js` (Surface Nets, weld, normals, simplify to budget) and its tests ("A sphere meshes closed and under budget").
-4. `tools/sheet.mjs`: headless render sheet (Playwright screenshots of `lab/?view=front|side|three|top`) next to the reference, plus silhouette score. Build this BEFORE any creature.
-5. `src/kit/parts.js` with named parts, plus material roles (stone, skin, horn, aged gold, ember glow).
-6. First creature, the **Horned Fiend**, in the realistic gothic style (refs: copy from `crimson-plague/art-drop/monsters/fiend_*.jpg` into `references/creatures/horned_fiend/`, reading only, never editing that repo). Write the breakdown, the spec, and sheet iterations, with before/after sheets kept in `previews/`.
-7. Idle animation (breath, head sway, secondary motion on tail and horns), a turntable, and optional proportion sliders.
-8. `GLTFExporter` → `exports/horned_fiend_v1.glb` with rig nodes `root, torso, head, arm_l, arm_r, leg_l, leg_r, eyes, hit_head` (matches Crimson Plague's art contract for the later port).
-9. Player model test: one Jet Set Radio-style player character (toon + outlines, `src/look/player_toon.js`) standing next to the gothic Horned Fiend in the lab, lit by the same lights, so the owner can judge the mix.
-10. Owner review #1 → Phase 2 (tiny FPS arena, see `docs/roadmap.md`).
+## Your tasks
+The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Step 1 (gothic lab polish) is done. Do only the step the owner asks for, then stop and send the link.
