@@ -1,7 +1,7 @@
 // Plain-sentence checks for the silhouette score used by the picture sheet.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { silhouetteScore, maskFromRGBA, normalize, bounds } from '../tools/lib/silhouette.js';
+import { silhouetteScore, maskFromRGBA, normalize, bounds, keepLargest, maskFromFigure } from '../tools/lib/silhouette.js';
 import { LIGHT_MODES, pickLightMode, flicker, FLAME, CANDLE_BUDGET } from '../src/look/candle.js';
 
 const rect = (w, h, x0, y0, x1, y1) => { const data = new Uint8Array(w * h); for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) data[y * w + x] = 1; return { w, h, data }; };
@@ -33,3 +33,14 @@ test('flame flicker is gentle: never more than the set depth from steady, and ne
   for (let t = 0; t < 20; t += 1 / 60) { const f = flicker(t, 2); assert.ok(Math.abs(f - 1) <= FLAME.depth + 1e-9); assert.ok(Math.abs(f - prev) < 0.03, "frame-to-frame jump"); prev = f; }
 });
 test('the phone preset uses fewer candle lights than the high preset', () => assert.ok(CANDLE_BUDGET.phone.pointLights < CANDLE_BUDGET.high.pointLights));
+
+test('Specks are dropped but a big loose piece (a hand, a tail tip) stays', () => {
+  const m = rect(60, 60, 5, 5, 30, 50), d = m.data; d[58 * 60 + 58] = 1; for (let y = 5; y < 12; y++) for (let x = 40; x < 46; x++) d[y * 60 + x] = 1;
+  const k = keepLargest(m, 0.02); assert.equal(k.data[58 * 60 + 58], 0, 'speck gone'); assert.equal(k.data[6 * 60 + 41], 1, 'loose piece kept'); assert.equal(k.data[20 * 60 + 20], 1);
+});
+test('A dark figure on a black background becomes a mask, and the orange floor glow at the bottom is ignored', () => {
+  const w = 10, h = 10, px = new Uint8Array(w * h * 4); for (let i = 0; i < w * h; i++) { px[i * 4] = 10; px[i * 4 + 1] = 10; px[i * 4 + 2] = 12; px[i * 4 + 3] = 255; }
+  const put = (x, y, r, g, b) => { const i = (y * w + x) * 4; px[i] = r; px[i + 1] = g; px[i + 2] = b; };
+  put(4, 3, 90, 20, 30); put(4, 9, 80, 55, 25);                       // skin in the body, glow at the floor
+  const m = maskFromFigure(px, w, h); assert.equal(m.data[3 * w + 4], 1); assert.equal(m.data[9 * w + 4], 0);
+});

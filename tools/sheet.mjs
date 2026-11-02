@@ -3,6 +3,7 @@
 //   row 1  front, side, three-quarter, top renders, lit with the real look (light=both, phone preset)
 //   row 2  the reference pictures from references/creatures/<name>/ (front.png, side.png, three.png, top.png), or a "no reference yet" tile
 //   row 3  silhouette overlay (ours red, reference blue, both white) and an overlap score; ours alone when there is no reference
+// If a creature has only one combined sheet (references/creatures/<name>/turnaround.svg: front | side | three-quarter in thirds), the three views are cut from it.
 // Silhouette renders come from the same lab with ?sil=1 (flat white on black), so the score does not depend on lighting.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,11 +36,15 @@ try {
   const refs = {};
   for (const v of VIEWS) for (const ext of ['png', 'jpg', 'jpeg', 'webp']) { const f = path.join(refDir, `${v}.${ext}`); if (fs.existsSync(f)) { refs[v] = { b64: b64(f), mime: ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg' }; break; } }
   const isPlaceholder = name === 'placeholder';
+  // one combined turnaround sheet (an SVG wrapping a JPEG), cut into front | side | three
+  let turn = null; const svg = path.join(refDir, 'turnaround.svg');
+  if (fs.existsSync(svg)) { const m = fs.readFileSync(svg, 'utf8').match(/href="data:image\/jpeg;base64,([^"]+)"/); if (m) turn = m[1]; }
+  const CROPS = { front: [58, 0, 400, 690], side: [385, 0, 415, 690], three: [860, 0, 410, 690] };   // x, y, w, h in the 1280x720 sheet
 
   // compose in a page (canvas), using the same pure silhouette maths the tests cover
   const page = await browser.context.newPage(); await page.goto(`${server.url}/tools/README.md`);   // any page on the same server, so the script can import the pure maths
   await page.setContent('<canvas id=c></canvas>'); await page.goto(`${server.url}/index.html`).catch(() => {});
-  const result = await page.evaluate(async ({ shots, refs, TW, TH, VIEWS, SCORED, MIN, name, isPlaceholder, base }) => {
+  const result = await page.evaluate(async ({ shots, refs, turn, CROPS, TW, TH, VIEWS, SCORED, MIN, name, isPlaceholder, base }) => {
     const S = await import(base + '/tools/lib/silhouette.js');
     const load = (mime, b) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = `data:${mime};base64,${b}`; });
     const pixels = (img) => { const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const x = c.getContext('2d'); x.drawImage(img, 0, 0); return { w: c.width, h: c.height, d: x.getImageData(0, 0, c.width, c.height).data }; };
@@ -54,11 +59,16 @@ try {
     for (let i = 0; i < VIEWS.length; i++) {
       const v = VIEWS[i], lit = await load('image/png', shots.lit[v]), sil = await load('image/png', shots.sil[v]);
       let [x, y] = cell(0, i); g.fillStyle = '#000'; g.fillRect(x, y, TW, TH); fit(lit, x, y); label(0, i, `${v}  (render)`);
-      const ours = (({ w, h, d }) => S.maskFromRGBA(d, w, h, 'light'))(pixels(sil));
+      const ours = S.keepLargest((({ w, h, d }) => S.maskFromRGBA(d, w, h, 'light'))(pixels(sil)));
       [x, y] = cell(1, i); g.fillStyle = '#16100e'; g.fillRect(x, y, TW, TH);
       let theirs = null;
       if (refs[v]) { const ri = await load(refs[v].mime, refs[v].b64); fit(ri, x, y); label(1, i, `${v}  (reference)`); const p = pixels(ri); theirs = S.maskFromRGBA(p.d, p.w, p.h, 'corner'); }
-      else { g.fillStyle = '#6d5f50'; g.font = '15px sans-serif'; g.textAlign = 'center'; g.fillText(isPlaceholder ? 'no reference (placeholder)' : 'NO REFERENCE YET', x + TW / 2, y + TH / 2); g.textAlign = 'left'; label(1, i, `${v}  (reference)`); }
+      else if (turn && CROPS[v]) {                                           // cut this view out of the combined turnaround sheet
+        const sheet = await load('image/jpeg', turn), [cx, cy, cw, ch] = CROPS[v], cc = document.createElement('canvas'); cc.width = cw; cc.height = ch;
+        cc.getContext('2d').drawImage(sheet, cx, cy, cw, ch, 0, 0, cw, ch); fit(cc, x, y); label(1, i, `${v}  (reference: turnaround)`);
+        const d = cc.getContext('2d').getImageData(0, 0, cw, ch); theirs = S.keepLargest(S.maskFromFigure(d.data, cw, ch));
+      }
+      else { g.fillStyle = '#6d5f50'; g.font = '15px sans-serif'; g.textAlign = 'center'; g.fillText(isPlaceholder ? 'no reference (placeholder)' : v === 'top' ? 'no top view on the reference sheet' : 'NO REFERENCE YET', x + TW / 2, y + TH / 2); g.textAlign = 'left'; label(1, i, `${v}  (reference)`); }
       [x, y] = cell(2, i); g.fillStyle = '#0c0a0a'; g.fillRect(x, y, TW, TH);
       const N = 128, rgba = theirs ? S.overlayRGBA(ours, theirs, N) : S.maskToRGBA(ours, N), small = document.createElement('canvas'); small.width = small.height = N;
       small.getContext('2d').putImageData(new ImageData(rgba, N, N), 0, 0); g.imageSmoothingEnabled = false; const k = Math.min(TW, TH) / N; g.drawImage(small, x + (TW - N * k) / 2, y, N * k, N * k); g.imageSmoothingEnabled = true;
@@ -68,7 +78,7 @@ try {
     }
     g.fillStyle = '#8a7a66'; g.font = '13px sans-serif'; g.fillText('row 3: ours = red, reference = blue, overlap = white. Score = overlap / union after aligning the bounding boxes.', PAD, H - 18);
     return { png: cv.toDataURL('image/png').split(',')[1], scores };
-  }, { shots, refs, TW, TH, VIEWS, SCORED, MIN, name, isPlaceholder, base: server.url });
+  }, { shots, refs, turn, CROPS, TW, TH, VIEWS, SCORED, MIN, name, isPlaceholder, base: server.url });
   fs.writeFileSync(path.join(outDir, 'sheet.png'), Buffer.from(result.png, 'base64'));
   fs.writeFileSync(path.join(outDir, 'scores.json'), JSON.stringify({ name, placeholder: isPlaceholder, scores: result.scores, needs: { front: MIN, side: MIN } }, null, 2) + '\n');
   fs.writeFileSync(path.join(outDir, 'index.html'), `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${name} picture sheet</title>

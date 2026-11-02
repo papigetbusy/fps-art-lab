@@ -28,7 +28,8 @@ for (const name of PART_NAMES) {
       const c = roleCentroid(mesh, f.role);
       assert.ok(c, `no ${f.role} vertices`);
       assert.ok(c[2] < stats.centroid[2], `${f.role} is at z ${c[2].toFixed(3)}, behind the centre ${stats.centroid[2].toFixed(3)}`);
-    } else if (f.back) assert.ok(stats.centroid[2] >= 0.2, `a tail trails behind (+Z), but its centre is at z ${stats.centroid[2].toFixed(3)}`);
+    } else if (f.curl) assert.ok(part.tip[2] < stats.max[2] - 0.05, 'the tip should point forward of the farthest-back point of the curl');
+    else if (f.back) assert.ok(stats.centroid[2] >= 0.2, `a tail trails behind (+Z), but its centre is at z ${stats.centroid[2].toFixed(3)}`);
     else assert.ok(stats.centroid[2] <= 0.04, `leans backwards: centre at z ${stats.centroid[2].toFixed(3)}`);
   });
   test(`${name} has a known material role on every group`, () => {
@@ -46,7 +47,7 @@ test('Sharp parts (horn, claw, tail) are single watertight shells with faces poi
 test('The horn ends in a needle: the last 4 cm is a point, never wider than 2.4 cm across', () => {
   const m = meshes.horn.mesh, n = m.positions.length / 3, V = (i) => [m.positions[3 * i], m.positions[3 * i + 1], m.positions[3 * i + 2]];
   const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-  let apex = V(0); for (let i = 0; i < n; i++) if (Math.hypot(...V(i)) > Math.hypot(...apex) + 1e-9) apex = V(i);       // the point farthest from the root is the tip
+  const tip = meshes.horn.part.tip; let apex = V(0); for (let i = 0; i < n; i++) if (dist(V(i), tip) < dist(apex, tip)) apex = V(i);       // the vertex at the end of the curve is the tip
   const near = []; for (let i = 0; i < n; i++) if (dist(V(i), apex) < 0.04) near.push(V(i));
   const c = [0, 1, 2].map((k) => near.reduce((s2, p) => s2 + p[k], 0) / near.length), ax = c.map((v, k) => v - apex[k]), al = Math.hypot(...ax), u = ax.map((v) => v / al);
   const widest = Math.max(...near.map((p) => { const d = [0, 1, 2].map((k) => p[k] - apex[k]), along = d[0] * u[0] + d[1] * u[1] + d[2] * u[2]; return Math.hypot(...d.map((v, k) => v - along * u[k])); }));

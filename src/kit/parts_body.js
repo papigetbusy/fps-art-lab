@@ -37,57 +37,63 @@ export function torso() {
 }
 
 // ---------------------------------------------------------------- head
-// Origin: the base of the neck, centred. The skull rises to y 0.33, the snout points to -Z (0.28 m long).
+// Origin: the base of the neck, centred. A SKULL, not a snout: brow, cheekbones and upper jaw all sit in nearly the same flat plane
+// (front of the face about z -0.12), the nose is two slits, the cheeks are hollow and the eyes sink deep under a heavy brow.
+// Skull top at y 0.33, chin line at y 0.03 (about 0.30 m, scale to taste). Small pointed ear fins sweep back; two needle fangs hang from the upper jaw.
 export function head() {
-  const cranium = ellipsoid([0, 0.2, 0.03], [0.115, 0.125, 0.14]);
-  const brow = mirrorX(capsule([0.02, 0.238, -0.1], [0.105, 0.248, -0.05], 0.034, 0.028));            // heavy, overhanging
-  const cheeks = mirrorX(ellipsoid([0.09, 0.13, -0.07], [0.032, 0.042, 0.06]));
-  const muzzle = ellipsoid([0, 0.125, -0.15], [0.062, 0.056, 0.095]);
-  const nose = sphere([0, 0.13, -0.245], 0.034);
-  const lip = ellipsoid([0, 0.085, -0.15], [0.068, 0.03, 0.09]);
-  const neck = capsule([0, -0.02, 0.04], [0, 0.12, 0.03], 0.078, 0.07);
-  const nape = ellipsoid([0, 0.04, 0.075], [0.105, 0.085, 0.06]);
-  const crest = capsule([0, 0.315, 0.0], [0, 0.22, 0.17], 0.024, 0.014);
-  const knobs = mirrorX(sphere([0.088, 0.268, 0.0], 0.042));                                          // where the horns grow from
-  const skull = smoothUnion(0.04, cranium, brow, cheeks, muzzle, nose, lip, neck, nape, crest);
-  const sockets = mirrorX(ellipsoid([0.054, 0.197, -0.108], [0.034, 0.03, 0.05]));
-  const nostrils = mirrorX(ellipsoid([0.019, 0.118, -0.275], [0.011, 0.009, 0.022]));
-  const carved = smoothSubtract(0.014, smoothSubtract(0.02, smoothUnion(0.03, skull, knobs), sockets), nostrils);
-  const slit = (c) => rotate(ellipsoid(c, [0.024, 0.0105, 0.014]), [0, 0, 0.38], c);                   // narrow, angry, outer corner raised
-  const eyes = mirrorX(slit([0.054, 0.197, -0.104]));
+  const cranium = ellipsoid([0, 0.205, 0.045], [0.104, 0.118, 0.125]);
+  const brow = mirrorX(capsule([0.0, 0.232, -0.088], [0.1, 0.244, -0.052], 0.036, 0.03));              // heavy, overhanging: the furthest-forward bone of the face
+  const cheekbone = mirrorX(ellipsoid([0.076, 0.148, -0.066], [0.036, 0.04, 0.04]));
+  const maxilla = ellipsoid([0, 0.095, -0.078], [0.058, 0.045, 0.048]);                                 // upper jaw, flush with the face, no muzzle
+  const bridge = ellipsoid([0, 0.17, -0.086], [0.022, 0.06, 0.026]);                                    // flat nose bridge
+  const chinPlate = ellipsoid([0, 0.05, -0.07], [0.05, 0.03, 0.04]);
+  const neck = capsule([0, -0.06, 0.06], [0, 0.1, 0.035], 0.052, 0.05);                                 // thin and sinewy
+  const nape = ellipsoid([0, 0.05, 0.085], [0.08, 0.08, 0.05]);
+  const knobs = mirrorX(sphere([0.082, 0.278, 0.0], 0.04));                                             // where the horns grow from
+  const skull = smoothUnion(0.03, cranium, brow, cheekbone, maxilla, bridge, chinPlate, neck, nape);
+  const hollows = mirrorX(ellipsoid([0.066, 0.108, -0.082], [0.026, 0.042, 0.034]));                    // sunken cheeks under the bones: gaunt
+  const sockets = mirrorX(ellipsoid([0.05, 0.19, -0.084], [0.034, 0.03, 0.042]));
+  const nostrils = mirrorX(ellipsoid([0.011, 0.122, -0.108], [0.0055, 0.022, 0.012]));                  // two thin vertical slits
+  const carved = smoothSubtract(0.012, smoothSubtract(0.016, smoothSubtract(0.02, smoothUnion(0.03, skull, knobs), sockets), hollows), nostrils);
+  const eyes = mirrorX(rotate(ellipsoid([0.05, 0.19, -0.074], [0.017, 0.0125, 0.012]), [0, 0, 0.32], [0.05, 0.19, -0.074]));   // small, red, set deep
+  const earBase = (sg) => [0.1 * sg, 0.17, 0.05];
   return {
     name: 'head', budget: 1050, facing: { role: 'eye' },
-    meshes: [1, -1].flatMap((sg) => [() => spike([0.04 * sg, 0.092, -0.215], [0.044 * sg, 0.0, -0.228], 0.014, 'bone'), () => spike([0.0225 * sg, 0.09, -0.245], [0.0235 * sg, 0.038, -0.249], 0.008, 'bone')]),
-    notes: 'neck base at the origin, skull up to y 0.33, snout toward -Z, deep sockets under a heavy brow, glowing slit eyes, two fangs',
+    notes: 'neck base at the origin, FLAT skull face (front at z about -0.12), heavy brow, hollow cheeks, deep sockets, two nose slits, small glowing eyes, ear fins swept back, two long fangs',
+    meshes: [
+      ...[1, -1].flatMap((sg) => [
+        () => spike([0.032 * sg, 0.082, -0.112], [0.034 * sg, 0.0, -0.118], 0.012, 'bone', 5),                // long upper needle fangs
+        () => spike([0.012 * sg, 0.082, -0.118], [0.013 * sg, 0.038, -0.12], 0.007, 'bone'),
+        () => spike(earBase(sg), [0.215 * sg, 0.215, 0.2], 0.026, 'skin', 4),                                 // pointed ear fin, swept back and up
+      ]),
+    ],
     grids: [
-      { name: 'skull', share: 0.92, sdf: carved, shapes: [tag(carved, 'skin'), tag(knobs, 'horn')], bounds: { min: [-0.22, -0.1, -0.34], max: [0.22, 0.38, 0.24] } },
-      { name: 'eyes', share: 0.08, sdf: eyes, shapes: [tag(eyes, 'eye')], bounds: { min: [-0.1, 0.16, -0.14], max: [0.1, 0.23, -0.07] } },
+      { name: 'skull', share: 0.92, sdf: carved, shapes: [tag(carved, 'skin'), tag(knobs, 'horn')], bounds: { min: [-0.2, -0.12, -0.18], max: [0.2, 0.36, 0.24] } },
+      { name: 'eyes', share: 0.08, sdf: eyes, shapes: [tag(eyes, 'eye')], bounds: { min: [-0.1, 0.16, -0.12], max: [0.1, 0.23, -0.05] } },
     ],
   };
 }
 
 // ---------------------------------------------------------------- jaw
-// Origin: the jaw hinge, centred. The chin is 0.25 m toward -Z, tusks rise from the chin, a spike hangs under it.
+// Origin: the jaw hinge, centred (it sits at about y 0.09, z -0.02 in head space). Short and gaunt: the chin is only 0.14 m toward -Z,
+// so with the mouth a little open the tip stays within 0.25 HH of the brow. Needle fangs rise from the chin; a row of small teeth behind them.
 export function jaw() {
-  const rami = mirrorX(capsule([0.078, 0.012, 0.0], [0.056, -0.036, -0.12], 0.034, 0.028));
-  const corpus = mirrorX(capsule([0.056, -0.036, -0.12], [0.022, -0.05, -0.235], 0.028, 0.023));
-  const chin = ellipsoid([0, -0.055, -0.235], [0.038, 0.03, 0.042]);
-  const hinge = mirrorX(sphere([0.078, 0.012, 0.0], 0.04));
-  const lower = smoothUnion(0.03, rami, corpus, chin, hinge);
-  const mouth = ellipsoid([0, 0.028, -0.15], [0.052, 0.032, 0.095]);                                    // scooped out, tongue sits in it
-  const shell = smoothSubtract(0.02, lower, mouth);
-  const tongue = ellipsoid([0, -0.002, -0.14], [0.03, 0.016, 0.075]);
+  const rami = mirrorX(capsule([0.07, 0.01, 0.0], [0.05, -0.03, -0.09], 0.022, 0.018));
+  const chinBar = mirrorX(capsule([0.05, -0.03, -0.09], [0.015, -0.04, -0.13], 0.018, 0.016));
+  const chin = ellipsoid([0, -0.04, -0.132], [0.03, 0.02, 0.026]);
+  const hinge = mirrorX(sphere([0.07, 0.01, 0.0], 0.03));
+  const lower = smoothUnion(0.02, rami, chinBar, chin, hinge);
+  const mouth = ellipsoid([0, 0.02, -0.08], [0.04, 0.02, 0.06]);
+  const shell = smoothSubtract(0.015, lower, mouth);
+  const tongue = ellipsoid([0, -0.01, -0.08], [0.022, 0.012, 0.05]);
   return {
     name: 'jaw', budget: 300, facing: { role: 'bone' },
+    notes: 'hinge at the origin, chin 0.14 m toward -Z (short, gaunt), two long needle fangs rising from the chin, small teeth behind',
     meshes: [
-      ...[1, -1].map((sg) => () => spike([0.046 * sg, -0.03, -0.212], [0.053 * sg, 0.094, -0.224], 0.015, 'bone', 5)),
-      ...[1, -1].flatMap((sg) => [0, 1].map((i) => () => spike([0.052 * sg, -0.015, -0.07 - i * 0.045], [0.052 * sg, 0.025, -0.07 - i * 0.045], 0.01, 'bone'))),
-      () => spike([0, -0.07, -0.235], [0, -0.17, -0.2], 0.024, 'bone', 5),
+      ...[1, -1].map((sg) => () => spike([0.03 * sg, -0.035, -0.115], [0.034 * sg, 0.075, -0.12], 0.012, 'bone', 5)),
+      ...[1, -1].flatMap((sg) => [0, 1].map((i) => () => spike([0.046 * sg, -0.02, -0.05 - i * 0.03], [0.046 * sg, 0.015, -0.05 - i * 0.03], 0.008, 'bone'))),
     ],
-    notes: 'hinge at the origin, chin toward -Z, long tusks rising from the chin, a bone spike under it',
-    grids: [
-      { name: 'jaw', share: 1, sdf: shell, shapes: [tag(shell, 'skin'), tag(tongue, 'skinDark')], bounds: { min: [-0.15, -0.1, -0.3], max: [0.15, 0.07, 0.07] } },
-    ],
+    grids: [{ name: 'jaw', share: 1, sdf: shell, shapes: [tag(shell, 'skin'), tag(tongue, 'skinDark')], bounds: { min: [-0.12, -0.09, -0.19], max: [0.12, 0.05, 0.06] } }],
   };
 }
 

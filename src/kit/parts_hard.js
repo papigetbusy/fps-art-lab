@@ -6,14 +6,14 @@ import { sweepTube, spike, sub3, add3, mul3, norm3, cross3 } from './part_tools.
 const tag = (f, role) => withRole(f, role);
 
 // ---------------------------------------------------------------- horn
-// Origin: the root of the horn (the left side one; mirror for the right). It sweeps out (+X), up and forward (-Z) and curls in to a needle tip.
-// Six heavy rings stand out along the length like a ram's. 0.6 m long. A swept mesh, so the tip is a true point.
+// Origin: the root of the horn (the +X one; mirror for the other side). RAM horn: it rises up and out from above the brow, curls back (+Z) and down,
+// and its tip points forward and out again. About 0.45 m along the curve, six heavy rings, a true needle tip (a swept mesh).
 export function horn() {
-  const pts = [[0, 0, 0], [0.05, 0.12, -0.02], [0.13, 0.27, -0.08], [0.2, 0.41, -0.2], [0.17, 0.53, -0.36]];
+  const pts = [[0, 0, 0], [0.05, 0.1, 0.02], [0.12, 0.19, 0.08], [0.19, 0.21, 0.19], [0.23, 0.12, 0.28], [0.21, 0.01, 0.27], [0.17, -0.04, 0.17]];
   return {
-    name: 'horn', budget: 300, facing: { bbox: true },
-    notes: 'root at the origin, sweeps out, up and forward, curls in to a needle point; six ridges',
-    meshes: [() => sweepTube(pts, 0.052, 0, { sides: 6, rings: 26, ridges: 6, amp: 0.012, pow: 0.9, role: 'horn' })],
+    name: 'horn', budget: 340, facing: { curl: true }, tip: pts[pts.length - 1],
+    notes: 'root at the origin; rises, curls back (+Z) and down, tip points forward-out; ridged; needle tip',
+    meshes: [() => sweepTube(pts, 0.068, 0, { sides: 6, rings: 28, ridges: 6, amp: 0.014, pow: 0.85, role: 'horn' })],
   };
 }
 
@@ -22,26 +22,26 @@ export function horn() {
 export function claw() {
   const pts = [[0, 0, 0], [0, -0.06, -0.025], [0, -0.13, -0.085], [0, -0.17, -0.17]];
   return {
-    name: 'claw', budget: 160, facing: { bbox: true },
+    name: 'claw', budget: 160, facing: { bbox: true }, tip: pts[pts.length - 1],
     notes: 'root at the origin, hangs down and hooks toward -Z, a true needle point',
     meshes: [() => sweepTube(pts, 0.024, 0, { sides: 6, rings: 14, pow: 0.8, role: 'claw' })],
   };
 }
 
 // ---------------------------------------------------------------- tail
-// Origin: the base of the spine. It drops, then sweeps back (+Z) and curls up in an S, 1.4 m long, ridged like a spine,
-// and ends in a barbed spearhead (a long blade and two swept-back barbs).
+// Origin: the base of the spine. Long and thin: it leaves the spine going back and down, reaches the floor (0.95 m below the origin)
+// and trails out about 1 m behind (+Z) in a slow S, ridged like a spine, and ends in a bone spike with two barbs.
 export function tail() {
-  const pts = [[0, 0, 0], [0, -0.12, 0.22], [0, -0.22, 0.5], [0.08, -0.2, 0.82], [0.2, -0.08, 1.08], [0.3, 0.1, 1.24]];
+  const pts = [[0, 0, 0], [0, -0.08, 0.2], [0, -0.3, 0.42], [0.02, -0.62, 0.6], [0.07, -0.88, 0.82], [0.14, -0.95, 1.1], [0.2, -0.93, 1.32]];
   const T = catmull(pts, 1), d = norm3(sub3(T, catmull(pts, 0.96))), s = norm3(cross3(d, [0, 1, 0]));
   const back = sub3(T, mul3(d, 0.03));
   return {
-    name: 'tail', budget: 280, facing: { back: true },
-    notes: 'base at the origin, drops then sweeps back (+Z) 1.4 m in an S that curls up, ridged, ends in a barbed spearhead',
+    name: 'tail', budget: 320, facing: { back: true },
+    notes: 'base at the origin, leaves the spine backward and down, touches the floor 0.95 m below, trails about 1.3 m back (+Z), ridged, bone spike with two barbs at the tip',
     meshes: [
-      () => sweepTube(pts, 0.075, 0.016, { sides: 6, rings: 20, ridges: 10, amp: 0.012, role: 'skin' }),
-      () => spike(back, add3(T, mul3(d, 0.18)), 0.032, 'bone'),
-      ...[1, -1].map((sg) => () => spike(back, add3(add3(T, mul3(s, 0.11 * sg)), mul3(d, -0.07)), 0.022, 'bone')),
+      () => sweepTube(pts, 0.06, 0.014, { sides: 6, rings: 22, ridges: 12, amp: 0.01, role: 'skin' }),
+      () => spike(back, add3(T, mul3(d, 0.2)), 0.028, 'bone'),
+      ...[1, -1].map((sg) => () => spike(back, add3(add3(T, mul3(s, 0.11 * sg)), mul3(d, -0.07)), 0.02, 'bone')),
     ],
   };
 }

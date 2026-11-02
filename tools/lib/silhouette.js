@@ -52,3 +52,38 @@ export function overlayRGBA(a, b, size = 128) {
   return out;
 }
 export function maskToRGBA(m, size = 128) { const A = normalize(m, size), out = new Uint8ClampedArray(size * size * 4); for (let i = 0; i < size * size; i++) { const v = A.data[i] ? 225 : 12; out[i * 4] = v; out[i * 4 + 1] = v; out[i * 4 + 2] = v; out[i * 4 + 3] = 255; } return out; }
+
+// Mask for a picture of a dark figure on a near-black, softly lit background (the Horned Fiend turnaround sheet):
+// bright-enough pixels are the figure, except in the bottom strip where an orange floor glow lies, where only dark-red skin counts.
+export function maskFromFigure(rgba, w, h, { glowFromY = 0.84, minLight = 30 } = {}) {
+  const data = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4, r = rgba[i], g = rgba[i + 1], b = rgba[i + 2], light = (r + g + b) / 3;
+    const body = light > minLight || (r > 38 && r > g * 1.4);
+    data[y * w + x] = y / h > glowFromY ? (body && r > 52 && g < r * 0.42 && b < r * 0.6 ? 1 : 0) : (body ? 1 : 0);
+  }
+  return { w, h, data };
+}
+
+// Drops stray specks: keeps the biggest connected blob and any other blob at least `minFrac` of its size (a hand or a tail tip that
+// the mask cut loose stays; label text, noise and floor glints go). Diagonal neighbours count as connected.
+export function keepLargest(m, minFrac = 0.01) {
+  const { w, h, data } = m, label = new Int32Array(w * h), sizes = [0], stack = [];
+  let n = 0;
+  for (let s0 = 0; s0 < w * h; s0++) {
+    if (!data[s0] || label[s0]) continue;
+    n++; let size = 0; label[s0] = n; stack.push(s0);
+    while (stack.length) {
+      const p = stack.pop(); size++;
+      const x = p % w, y = (p - x) / w;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        const xx = x + dx, yy = y + dy; if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue;
+        const q = yy * w + xx; if (data[q] && !label[q]) { label[q] = n; stack.push(q); }
+      }
+    }
+    sizes.push(size);
+  }
+  const big = Math.max(0, ...sizes), out = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) if (label[i] && sizes[label[i]] >= big * minFrac) out[i] = 1;
+  return { w, h, data: out };
+}

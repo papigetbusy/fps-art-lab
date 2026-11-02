@@ -1,0 +1,13 @@
+{
+  "name": "horned_fiend",
+  "placeholder": false,
+  "scores": {
+    "front": 0.526,
+    "side": 0.398,
+    "three": 0.38
+  },
+  "needs": {
+    "front": 0.8,
+    "side": 0.8
+  }
+}
