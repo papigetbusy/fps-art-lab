@@ -7,7 +7,7 @@
 | 3 Mesher | ✅ done, on main |
 | 4 Candle-lit chapel + picture sheet | ✅ approved, on main |
 | 5 Parts kit | ✅ approved, on main (owner: head still looked like a dog, fixed in Step 6) |
-| 6 Horned Fiend v1 | ▶️ **CURRENT**, see `NEXT.md`. Use ONLY `references/creatures/horned_fiend/turnaround.svg` + `proportions.md` |
+| 6 Horned Fiend v1 | ▶️ **CURRENT**: redo it to match the 🔒 **owner-locked turnaround** exactly (head first). See `NEXT.md` and `references/creatures/horned_fiend/DESIGN-LOCK.md` |
 | 7–10 | Then Phase 1 finishes (idle, glb, look-lock pick, JSR player, perf baseline) |
 | Phases 2–7 | Monsters one by one → terrain/doors/levels → guns + shooting FX → everything else → arena proof → Crimson port. Full checklist: **`docs/FULL-ROADMAP.md`** |
 

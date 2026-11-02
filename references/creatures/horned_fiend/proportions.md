@@ -1,5 +1,7 @@
 # Horned Fiend: proportion lock (the ONLY reference)
 
+> 🔒 **Owner-locked design**: see `DESIGN-LOCK.md`. The head must match the turnaround exactly. Small tweaks only after the match.
+
 **Single source of truth:** `turnaround.svg`, one sheet showing the SAME fiend in FRONT (left), SIDE (middle) and THREE-QUARTER (right) views on a 0–2.2 m grid. It's an SVG wrapping the JPEG, because the GitHub connector can only write text. To get the JPEG, decode the base64 `href`, or open the SVG in a browser or headless screenshot. Use no other fiend pictures: separate front/side images drift, and this sheet is the fix. The old `crimson-plague` fiend images and any earlier refs are retired.
 
 ## Locked numbers (metres; HH = head height ≈ 0.27 m)

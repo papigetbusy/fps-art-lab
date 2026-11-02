@@ -2,12 +2,21 @@
 
 > Read `STATUS.md` first. Do ONLY this step. Push the step branch only. **Never `main`** until the owner says "approved" in chat. Send the lab links below, then STOP.
 
-## Current step: Step 6, Horned Fiend v1 (scary demon head fix)
+## Current step: Step 6, redo the Horned Fiend to MATCH the locked turnaround exactly
 Owner feedback on Step 5: parts are a little better, but **the head looks like a dog, not a demon.**
+
+### 🔒 Design lock
+The owner says the turnaround is **perfect** and has locked it (`references/creatures/horned_fiend/DESIGN-LOCK.md`). **Redo the fiend's head and body until the lab matches the sheet**: front, side and three-quarter. Don't stop at "close". Small detail tweaks come later, only when the owner asks.
+
+**Success = all of these:**
+- Lab `view=front`, `view=side` and `view=three` match the sheet's three views side by side (silhouette ≥ 0.80 front and side, and the head reads the same at a glance).
+- Skull demon face: brow, sunken red eyes, nose slits, fangs, ram horns curling back then forward.
+- Side-view jaw check passes (≤ 0.25 HH past the brow). **No dog snout.**
+- Iterate the picture sheet (render → 3 notes → fix) as many rounds as it takes, with the head first. Put the final sheet next to the turnaround in `previews/horned_fiend/`.
 
 ### References: use ONLY these
 - `references/creatures/horned_fiend/turnaround.svg`: ONE sheet with front, side and three-quarter views of the same fiend (an SVG wrapping a JPEG; decode it or screenshot it for your picture sheet)
-- `references/creatures/horned_fiend/proportions.md`: locked numbers and the **NOT-a-dog rules**
+- `references/creatures/horned_fiend/DESIGN-LOCK.md` + `proportions.md`: locked numbers and the **NOT-a-dog rules**
 Do not use any other fiend images (no old crimson-plague art-drop pictures).
 
 ### Branch
