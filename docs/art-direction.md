@@ -12,7 +12,7 @@ Premium, grounded, cinematic **realistic dark-gothic** shooter for the world, li
 - **Not:** Roblox/voxel/toy, bright evenly lit rooms, saturated colours, JSR/graffiti/toon in the world (JSR = player models only, Step 10).
 
 ## Locked creature designs
-- **Horned Fiend:** 🔒 `references/creatures/horned_fiend/turnaround.svg` (owner-locked 2026-11-02, `DESIGN-LOCK.md`). The head must match exactly; small detail tweaks only after the silhouette and head match. **Eyes always glow** (red-orange emissive). Armored elites = the same fiend + gothic iron/gold armour parts (`variant-armored.svg`); all elite/element variants are built on the locked base, never as new creatures.
+- **Horned Fiend:** 🔒 `references/creatures/horned_fiend/turnaround.svg` (owner-locked 2026-11-02, `DESIGN-LOCK.md`). The head must match exactly; small detail tweaks only after the silhouette and head match. **Eyes always glow** (red-orange emissive). **The locked base never changes**; variants only add gear. Armored elites = the same fiend + **demonic** armour (spikes, barbs, skull pauldrons, molten runes) and human-foot guards over the hooves (`variant-armored.svg`); all elite/element variants are built on the locked base, never as new creatures.
 
 ## Primary: realistic dark gothic (everything except player models)
 ### Do
