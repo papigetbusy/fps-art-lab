@@ -1,7 +1,6 @@
 # Claude brief: FPS Art Lab
 
-> **Read `WORKFLOW.md` first (owner-locked).** (1) Never push/merge feature or lab code to `main` without the owner's "approved" — work on `claude/step-<n>-<name>` branches and send a branch **lab test link**. (2) Grok Bot writes your briefs in this repo; you write the code.
-> **Look lock (Phase 1): gothic candle-lit horror** — see `docs/art-direction.md`.
+> **Start here: read `STATUS.md`, then `NEXT.md`.** Do only the current step. Push the step branch only. Never `main` until the owner says "approved". When done, send the lab links listed in `NEXT.md` and stop. (Rules: `WORKFLOW.md`. Look lock: gothic candle-lit horror, `docs/art-direction.md`.)
 
 You are the code half of this project. The owner is not a programmer: explain in plain language, one sentence per choice. He checks work on his iPhone (held sideways) through the GitHub Pages link and the green tick.
 
