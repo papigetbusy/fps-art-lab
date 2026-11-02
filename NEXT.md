@@ -10,9 +10,11 @@ The owner says the turnaround is **perfect** and has locked it (`references/crea
 
 **Success = all of these:**
 - Lab `view=front`, `view=side` and `view=three` match the sheet's three views side by side (silhouette ≥ 0.80 front and side, and the head reads the same at a glance).
-- Skull demon face: brow, sunken red eyes, nose slits, fangs, ram horns curling back then forward.
+- Skull demon face: brow, sunken **glowing** red-orange eyes (emissive + a small bloom halo, matching the updated sheet), nose slits, fangs, ram horns curling back then forward.
 - Side-view jaw check passes (≤ 0.25 HH past the brow). **No dog snout.**
 - Iterate the picture sheet (render → 3 notes → fix) as many rounds as it takes, with the head first. Put the final sheet next to the turnaround in `previews/horned_fiend/`.
+
+**Not in this step:** the armored variant (`variant-armored.svg`) is a later pass. Don't build armour now, and don't let it change the body or head.
 
 ### References: use ONLY these
 - `references/creatures/horned_fiend/turnaround.svg`: ONE sheet with front, side and three-quarter views of the same fiend (an SVG wrapping a JPEG; decode it or screenshot it for your picture sheet)
