@@ -22,9 +22,13 @@ Example: `https://raw.githack.com/papigetbusy/fps-art-lab/claude/step-6-horned-f
 - Claude opens its own link headless first and confirms it renders before sending it. If githack caches an old version, add `&v=<commit-sha>`.
 - After sign-off and merge, the same params work on the live lab: `https://papigetbusy.github.io/fps-art-lab/lab/?<params>`.
 
+## Where Claude's instructions live
+- `STATUS.md`: what's done and what's next. `NEXT.md`: the one current step (branch, brief, push command, lab links). Grok Bot keeps both up to date; the owner just says "go to the repo".
+- Until the owner approves merging these docs, they live on branch `claude/phase-1-look-lock`.
+
 ## The loop per step
 1. Owner → Grok: "next step" or notes.
 2. Grok updates the brief in the repo and gives the owner a paste line.
-3. Owner pastes it to Claude. Claude builds on `claude/step-<n>-...`, tests green, pushes the branch, sends the lab test link + 2 plain sentences.
+3. Owner tells Claude "go to the repo" (Claude reads `STATUS.md` → `NEXT.md`). Claude builds on `claude/step-<n>-...`, tests green, pushes the branch, sends the lab test link + 2 plain sentences.
 4. Owner checks (level per step: none / lab glance / careful review) → "approved" or notes.
 5. On "approved": Claude merges to `main`, marks the step ✅ in `docs/claude-steps.md`, adds the changelog line.
