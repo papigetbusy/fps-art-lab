@@ -14,7 +14,7 @@ The owner says the turnaround is **perfect** and has locked it (`references/crea
 - Side-view jaw check passes (≤ 0.25 HH past the brow). **No dog snout.**
 - Iterate the picture sheet (render → 3 notes → fix) as many rounds as it takes, with the head first. Put the final sheet next to the turnaround in `previews/horned_fiend/`.
 
-**Not in this step:** the armored variant (`variant-armored.svg`) is a later pass. Don't build armour now, and don't let it change the body or head.
+**Not in this step:** the armored variant (`variant-armored.svg`) is a later pass. Don't build armour now. The base you build here becomes **frozen** once the owner approves it (`DESIGN-LOCK.md` hard rule), and later armour must attach to it without changing it. Use bare hooves here (no foot-guards); foot-guards belong to the armored variant.
 
 ### References: use ONLY these
 - `references/creatures/horned_fiend/turnaround.svg`: ONE sheet with front, side and three-quarter views of the same fiend (an SVG wrapping a JPEG; decode it or screenshot it for your picture sheet)

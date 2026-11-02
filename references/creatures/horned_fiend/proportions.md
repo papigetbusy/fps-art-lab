@@ -23,8 +23,8 @@
 | Tail | long and thin, reaches the floor and trails out ~1 m behind, bony spike tip |
 | Skin | dark crimson/charcoal, **wet sheen**, sinew texture; candle underlight + crimson rim |
 
-## Armored variant
-Same body and proportions. The armour sits on top: shoulder pauldrons add about 0.3 HH to shoulder width, the chest plate runs from collarbone to navel, and there are greaves on the shins and vambraces on the forearms. Head, horns and eyes stay uncovered. See `DESIGN-LOCK.md` and `variant-armored.svg`.
+## Armored variant (gear only, base frozen)
+The body and proportions are exactly the base. The **demonic** armour sits on top: horned-skull pauldrons with spikes add about 0.3 HH to shoulder width, a ribcage chest plate runs from collarbone to navel, and there are clawed vambraces, spiked knee guards, barbed tail plates and molten rune cracks. Feet get human-foot-shaped guards over the hooves, with the hoof tips showing. Head, horns and eyes stay uncovered. See `DESIGN-LOCK.md`.
 
 ## NOT a dog: hard rules
 - The face is a **flat skull**: brow, cheekbones and chin all in the same plane. No long tapering snout, no wolf/dog nose pad, no floppy or upright dog ears.
