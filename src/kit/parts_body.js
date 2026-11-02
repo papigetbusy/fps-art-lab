@@ -8,30 +8,33 @@ const tag = (f, role) => withRole(f, role);
 
 // ---------------------------------------------------------------- torso
 // Origin: centre of the pelvis. The spine runs up +Y to the neck (y 0.86), the chest faces -Z, shoulders at y 0.7, x +-0.34.
-export function torso() {
-  const pelvis = ellipsoid([0, 0.02, 0.02], [0.2, 0.13, 0.15]);
-  const abdomen = ellipsoid([0, 0.25, 0.0], [0.15, 0.2, 0.12]);
-  const ribcage = ellipsoid([0, 0.53, 0.0], [0.27, 0.27, 0.19]);
-  const pecs = mirrorX(ellipsoid([0.12, 0.57, -0.1], [0.14, 0.1, 0.1]));
-  const lats = mirrorX(ellipsoid([0.2, 0.42, 0.1], [0.1, 0.19, 0.08]));
-  const traps = mirrorX(capsule([0.05, 0.84, 0.03], [0.28, 0.72, 0.03], 0.055, 0.08));
-  const shoulders = mirrorX(sphere([0.33, 0.7, 0.0], 0.1));
-  const abs = mirrorX(smoothUnion(0.03, ...[0, 1, 2].map((i) => ellipsoid([0.058, 0.12 + i * 0.085, -0.105], [0.052, 0.036, 0.04]))));
+// Step 6b options (all 1 = the Step 5 torso): widths pw / aw / cw / sw (pelvis, abdomen, ribcage, shoulders) and depths pd / ad / cd (front to back),
+// rise = lifts the shoulder line, so a creature's data can slim the waist or deepen the chest without a new part.
+export function torso({ pw = 1, aw = 1, cw = 1, sw = 1, pd = 1, ad = 1, cd = 1, rise = 0 } = {}) {
+  const pelvis = ellipsoid([0, 0.02, 0.02], [0.2 * pw, 0.13, 0.15 * pd]);
+  const abdomen = ellipsoid([0, 0.25, 0.0], [0.15 * aw, 0.2, 0.12 * ad]);
+  const ribcage = ellipsoid([0, 0.53, 0.0], [0.27 * cw, 0.27, 0.19 * cd]);
+  const pecs = mirrorX(ellipsoid([0.12 * cw, 0.57, -0.1 * cd], [0.14, 0.1, 0.1]));
+  const lats = mirrorX(ellipsoid([0.2 * cw, 0.42, 0.1 * cd], [0.1, 0.19, 0.08]));
+  const traps = mirrorX(capsule([0.05, 0.84 + rise, 0.03], [0.28 * sw, 0.72 + rise, 0.03], 0.055, 0.08));
+  const shoulders = mirrorX(sphere([0.33 * sw, 0.7 + rise, 0.0], 0.1));
+  const abs = mirrorX(smoothUnion(0.03, ...[0, 1, 2].map((i) => ellipsoid([0.058, 0.12 + i * 0.085, -0.105 * ad], [0.052, 0.036, 0.04]))));
   const neck = capsule([0, 0.74, 0.02], [0, 0.9, 0.0], 0.085, 0.07);
   const skin = smoothUnion(0.06, pelvis, abdomen, ribcage, pecs, lats, traps, shoulders, neck);
-  const fleshed = smoothUnion(0.03, skin, abs);
-  // bone shows through: collar bones, breastbone, three ribs a side, spine spikes down the back
-  const collar = mirrorX(capsule([0.03, 0.8, -0.14], [0.3, 0.76, -0.04], 0.022, 0.026));
-  const sternum = capsule([0, 0.44, -0.19], [0, 0.78, -0.165], 0.026, 0.022);
-  const ribs = mirrorX(union(...[0, 1, 2].map((i) => capsule([0.05, 0.4 + i * 0.075, -0.19], [0.23, 0.37 + i * 0.075, -0.09], 0.022, 0.016))));
-  const bone = union(collar, sternum, ribs);
+  // Step 6b: no bone sticking out of the chest. Ribs, collar bones and the breastbone are only shallow ridges under the skin (the sheet has no chest spikes);
+  // the only sharp bone is the row of small spine spikes down the back.
+  const ribs = mirrorX(union(...[0, 1, 2, 3].map((i) => capsule([0.05, 0.38 + i * 0.07, -0.185 * cd], [0.24 * cw, 0.33 + i * 0.07, -0.07 * cd], 0.016, 0.011))));
+  const collar = mirrorX(capsule([0.03, 0.8 + rise, -0.14 * cd], [0.3 * sw, 0.76 + rise, -0.04], 0.016, 0.02));
+  const sternum = capsule([0, 0.44, -0.19 * cd], [0, 0.78 + rise, -0.165 * cd], 0.016, 0.014);
+  const fleshed = smoothUnion(0.03, smoothUnion(0.022, skin, ribs, collar, sternum), abs);
+  const bone = union(capsule([0, 0.0, 0.0], [0, 0.001, 0.0], 0.001));      // (nothing: the grid below only keeps the part's role list stable)
+  const SPIKES = 9;
   return {
-    name: 'torso', budget: 1520, facing: { role: 'bone' },
-    meshes: [0, 1, 2, 3, 4].map((i) => () => spike([0, 0.14 + i * 0.13, 0.14 + (i > 2 ? 0.02 : 0)], [0, 0.2 + i * 0.13, 0.27 + (i > 2 ? 0.02 : 0)], 0.034, 'bone', 5)),
-    notes: 'pelvis at the origin, neck at y 0.9, chest and ribs face -Z, spine spikes down the back (+Z)',
+    name: 'torso', budget: 1520, facing: { bbox: true },
+    meshes: Array.from({ length: SPIKES }, (_, i) => () => { const y = 0.1 + i * 0.1, z = 0.13 + (y > 0.55 ? 0.03 : 0.0) + 0.04 * Math.sin(i / SPIKES * 3.1); return spike([0, y, z], [0, y + 0.045, z + 0.085 - i * 0.004], 0.02, 'bone', 5); }),
+    notes: 'pelvis at the origin, neck at y 0.9, chest and ribs face -Z (shallow ridges only), nine small spine spikes down the back (+Z)',
     grids: [
-      { name: 'flesh', share: 0.75, sdf: fleshed, shapes: [tag(fleshed, 'skin')], bounds: { min: [-0.5, -0.2, -0.3], max: [0.5, 1.0, 0.28] } },
-      { name: 'bone', share: 0.25, sdf: bone, shapes: [tag(bone, 'bone')], bounds: { min: [-0.36, 0.3, -0.28], max: [0.36, 0.84, 0.02] } },
+      { name: 'flesh', share: 1, sdf: fleshed, shapes: [tag(fleshed, 'skin')], bounds: { min: [-0.5, -0.2, -0.3], max: [0.5, 1.0, 0.28] } },
     ],
   };
 }
@@ -55,7 +58,7 @@ export function head() {
   const sockets = mirrorX(ellipsoid([0.05, 0.19, -0.084], [0.034, 0.03, 0.042]));
   const nostrils = mirrorX(ellipsoid([0.011, 0.122, -0.108], [0.0055, 0.022, 0.012]));                  // two thin vertical slits
   const carved = smoothSubtract(0.012, smoothSubtract(0.016, smoothSubtract(0.02, smoothUnion(0.03, skull, knobs), sockets), hollows), nostrils);
-  const eyes = mirrorX(rotate(ellipsoid([0.05, 0.19, -0.074], [0.017, 0.0125, 0.012]), [0, 0, 0.32], [0.05, 0.19, -0.074]));   // small, red, set deep
+  const eyes = mirrorX(rotate(ellipsoid([0.05, 0.19, -0.082], [0.024, 0.016, 0.014]), [0, 0, 0.32], [0.05, 0.19, -0.082]));   // small, red, set deep
   const earBase = (sg) => [0.1 * sg, 0.17, 0.05];
   return {
     name: 'head', budget: 1050, facing: { role: 'eye' },
@@ -101,14 +104,16 @@ export function jaw() {
 // kind 'arm': origin at the shoulder, hangs down (-Y), the elbow points back and the forearm comes forward (-Z).
 // kind 'leg': origin at the hip; digitigrade (walks on its toes): the knee points forward, the shin slopes back to a high ankle.
 // Sinew and muscle: separate bulges blended with a tight crease, so the limb is lumps and cords, not a tube.
-export function limb({ kind = 'arm' } = {}) {
+// Step 6b options (all optional, the defaults are the Step 5 limb): joints = [shoulder/hip, elbow/knee, wrist/ankle] in metres, radii = widths at those
+// three joints, bulge = how much the muscle lumps stand proud (1 = Step 5, 0 = lean sinew only, so a creature's data can slim a limb without a new part).
+export function limb({ kind = 'arm', joints, radii, bulge = 1 } = {}) {
   const arm = kind === 'arm';
-  const J = arm ? [[0, 0, 0], [0.01, -0.36, 0.05], [0, -0.66, -0.12]] : [[0, 0, 0], [0, -0.45, -0.17], [0, -0.86, 0.08]];
-  const R = arm ? [0.085, 0.062, 0.042] : [0.125, 0.078, 0.04];
+  const J = joints || (arm ? [[0, 0, 0], [0.01, -0.36, 0.05], [0, -0.66, -0.12]] : [[0, 0, 0], [0, -0.45, -0.17], [0, -0.86, 0.08]]);
+  const R = radii || (arm ? [0.085, 0.062, 0.042] : [0.125, 0.078, 0.04]);
   const [S, E, W] = J;
   const tilt = (a, b) => Math.atan2(-(b[2] - a[2]), -(b[1] - a[1]));                                   // how far a segment leans forward
   const mid = (a, b, t) => add3(a, mul3(sub3(b, a), t));
-  const blob = (a, b, t, off, rad) => { const c = add3(mid(a, b, t), off); return rotate(ellipsoid(c, [rad[0] * 1.25, rad[1], rad[2] * 1.25]), [tilt(a, b), 0, 0], c); };   // bulges stand proud of the bone, so the limb reads as muscle
+  const blob = (a, b, t, off, rad) => { const c = add3(mid(a, b, t), mul3(off, bulge)); return rotate(ellipsoid(c, [rad[0] * (1 + 0.25 * bulge), rad[1], rad[2] * (1 + 0.25 * bulge)].map((v, i) => i === 1 ? v : v * (0.55 + 0.45 * bulge))), [tilt(a, b), 0, 0], c); };   // bulges stand proud of the bone, so the limb reads as muscle
   const parts = [capsule(S, E, R[0], R[1]), capsule(E, W, R[1] * 0.9, R[2]), sphere(E, R[1] * 1.05)];
   if (arm) parts.push(sphere([0, -0.0, 0], 0.098), blob(S, E, 0.42, [0, 0, -0.04], [0.068, 0.12, 0.064]), blob(S, E, 0.45, [0, 0, 0.055], [0.062, 0.12, 0.056]), blob(E, W, 0.3, [0, 0, -0.03], [0.062, 0.12, 0.056]), blob(E, W, 0.35, [0.0, 0, 0.04], [0.05, 0.12, 0.046]));
   else parts.push(sphere([0, 0.0, 0.0], 0.13), blob(S, E, 0.45, [0, 0, -0.05], [0.115, 0.2, 0.1]), blob(S, E, 0.5, [0, 0, 0.06], [0.09, 0.19, 0.08]), blob(E, W, 0.22, [0, 0, 0.06], [0.075, 0.14, 0.075]), sphere(add3(E, [0, 0, -0.045]), 0.08));

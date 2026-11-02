@@ -35,7 +35,7 @@ fiend.root.position.y = 0.08;              // standing on the dais
 scene.add(fiend.root);
 
 // the model faces -Z, so "front" looks from -Z
-const VIEWS = { board: [0, 1.7, -5.6], front: [0, 1.35, -5.2], side: [5.2, 1.35, 0], three: [3.4, 1.8, -3.9], top: [0, 6.5, -0.01] };
+const VIEWS = { board: [0, 1.7, -5.6], front: [0, 1.35, -5.2], side: [5.2, 1.35, 0], three: [-4.5, 1.6, -2.6], top: [0, 6.5, -0.01] };
 let spin = false;
 function setView(v) {
   if (v === 'spin') { spin = true; return; }

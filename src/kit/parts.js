@@ -8,8 +8,8 @@ import { horn, claw, tail, armourPlate, trimBand, gem, cloth } from './parts_har
 export { meshPart, partStats, roleCentroid } from './part_tools.js';
 
 export const PARTS = {
-  torso, head, jaw,
-  limb: () => limb({ kind: 'arm' }), leg: () => limb({ kind: 'leg' }),
+  torso: (o) => torso(o), head, jaw,
+  limb: (o) => limb({ ...o, kind: 'arm' }), leg: (o) => limb({ ...o, kind: 'leg' }),
   hand, claw, hoofFoot, horn, tail, armourPlate, trimBand, gem, cloth,
 };
 export const PART_NAMES = Object.keys(PARTS);

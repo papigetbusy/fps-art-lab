@@ -24,10 +24,11 @@ function normalMatrix(m) {
   return c;
 }
 
+const MESH_CACHE = new Map();
 const vec = (s) => (Array.isArray(s) ? s : [s, s, s]);
 
 // world matrices for every instance, in order (a parent must come before its children)
-function placeAll(spec) {
+export function placeAll(spec) {
   const world = {}, pivots = {};
   for (const inst of spec.instances) {
     const own = mul(T(inst.local || inst.at || [0, 0, 0]), mul(rotM(inst.rot || [0, 0, 0]), mul(S(vec(inst.scale ?? 1)), inst.mirror ? S([-1, 1, 1]) : I4())));
@@ -48,7 +49,8 @@ function placeAll(spec) {
 export function assemble(spec) {
   const { world, pivots } = placeAll(spec), out = [];
   for (const inst of spec.instances) {
-    const part = buildPart(inst.part, inst.opts), m = meshPart(part, { scale: (inst.budget || part.budget) / part.budget });
+    const part = buildPart(inst.part, inst.opts), key = `${inst.part}|${JSON.stringify(inst.opts || null)}|${inst.budget || part.budget}`;
+    let m = MESH_CACHE.get(key); if (!m) { m = meshPart(part, { scale: (inst.budget || part.budget) / part.budget }); MESH_CACHE.set(key, m); }   // a part is meshed once per size; the fitting tool re-places it many times
     const M = world[inst.id], N = normalMatrix(M), flip = det3(M) < 0;
     const P = new Float32Array(m.positions.length), Nn = new Float32Array(m.normals.length);
     for (let v = 0; v < m.positions.length; v += 3) {

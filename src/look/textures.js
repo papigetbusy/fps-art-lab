@@ -32,14 +32,34 @@ export function flagstones(size = 512, seed = 7) {
 }
 
 // leathery demon skin: mottled colour and a pore/vein bump
-export function demonSkin(size = 256, seed = 3) {
+export function demonSkin(size = 512, seed = 3) {
+  // Step 6b: lean, wet, sinewy skin like the turnaround: small leathery pebbles, long tendon strands and creases, redder in the sinew, near-black in the cracks.
   const rand = rng(seed), [c, g] = canvas(size), [b, h] = canvas(size);
-  g.fillStyle = '#44120f'; g.fillRect(0, 0, size, size); h.fillStyle = '#808080'; h.fillRect(0, 0, size, size);
-  for (let i = 0; i < 260; i++) { const x = rand() * size, y = rand() * size, r = 6 + rand() * 26; const gr = g.createRadialGradient(x, y, 0, x, y, r); const d = rand() < 0.5; gr.addColorStop(0, d ? 'rgba(30,6,6,0.35)' : 'rgba(120,40,30,0.25)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
-  for (let i = 0; i < 26; i++) { const col = `rgba(${20 + rand() * 30},4,6,0.5)`; let x = rand() * size, y = rand() * size; for (const t of [g, h]) { t.strokeStyle = t === g ? col : 'rgba(255,255,255,0.5)'; t.lineWidth = 1 + rand() * 1.5; t.beginPath(); t.moveTo(x, y); } for (let k = 0; k < 8; k++) { const nx = x + (rand() - 0.5) * 40, ny = y + (rand() - 0.5) * 40; for (const t of [g, h]) t.lineTo(nx, ny); x = nx; y = ny; } for (const t of [g, h]) t.stroke(); }
-  speckle(h, size, 3000, 1.2, 0.5, rand, false);
+  g.fillStyle = '#3a0f0d'; g.fillRect(0, 0, size, size); h.fillStyle = '#707070'; h.fillRect(0, 0, size, size);
+  for (let i = 0; i < 120; i++) { const x = rand() * size, y = rand() * size, r = 14 + rand() * 50, gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, rand() < 0.5 ? 'rgba(14,3,3,0.4)' : 'rgba(130,34,26,0.3)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }   // blotchy light and dark patches
+  const wrapDraw = (fn) => { for (const ox of [-size, 0, size]) for (const oy of [-size, 0, size]) fn(ox, oy); };         // tile edges match, so box-mapped skin has no seams
+  // pebbles: a dome with a dark rim, in both the colour and the bump map
+  for (let i = 0; i < 2600; i++) {
+    const x = rand() * size, y = rand() * size, r = 3 + rand() * 5.5, sq = 0.65 + rand() * 0.5, rot = rand() * 3.14;
+    wrapDraw((ox, oy) => { if (x + ox < -r || y + oy < -r || x + ox > size + r || y + oy > size + r) return;
+      const gb = h.createRadialGradient(x + ox, y + oy, 0, x + ox, y + oy, r); gb.addColorStop(0, 'rgba(255,255,255,0.55)'); gb.addColorStop(0.6, 'rgba(180,180,180,0.25)'); gb.addColorStop(1, 'rgba(0,0,0,0.55)');
+      h.fillStyle = gb; h.beginPath(); h.ellipse(x + ox, y + oy, r, r * sq, rot, 0, 7); h.fill();
+      g.strokeStyle = 'rgba(8,1,1,0.5)'; g.lineWidth = 1; g.beginPath(); g.ellipse(x + ox, y + oy, r, r * sq, rot, 0, 7); g.stroke(); });
+  }
+  // tendons and sinew: long, slightly wavy strands running mostly along the limb, raised and a little redder and glossier
+  for (let i = 0; i < 70; i++) {
+    let x = rand() * size, y = rand() * size; const len = 80 + rand() * 220, lw = 1.5 + rand() * 3.5, drift = (rand() - 0.5) * 0.5; const pts = [[x, y]];
+    for (let k = 0; k < 10; k++) { x += drift * 10 + (rand() - 0.5) * 8; y += len / 10; pts.push([x, y]); }
+    wrapDraw((ox, oy) => { for (const [t, col, w2] of [[h, 'rgba(255,255,255,0.45)', lw], [h, 'rgba(0,0,0,0.4)', lw + 2.2], [g, 'rgba(150,40,30,0.38)', lw]]) {
+      if (t === h && col.startsWith('rgba(0')) { t.strokeStyle = col; t.lineWidth = w2; t.beginPath(); pts.forEach(([px, py], j) => (j ? t.lineTo(px + ox + 3, py + oy) : t.moveTo(px + ox + 3, py + oy))); t.stroke(); continue; }
+      t.strokeStyle = col; t.lineWidth = w2; t.beginPath(); pts.forEach(([px, py], j) => (j ? t.lineTo(px + ox, py + oy) : t.moveTo(px + ox, py + oy))); t.stroke(); } });
+  }
+  // creases
+  for (let i = 0; i < 40; i++) { let x = rand() * size, y = rand() * size; const pts = [[x, y]]; for (let k = 0; k < 6; k++) { x += (rand() - 0.5) * 50; y += (rand() - 0.5) * 50; pts.push([x, y]); }
+    wrapDraw((ox, oy) => { for (const [t, col] of [[g, 'rgba(6,1,2,0.6)'], [h, 'rgba(0,0,0,0.6)']]) { t.strokeStyle = col; t.lineWidth = 1.2 + rand() * 1.2; t.beginPath(); pts.forEach(([px, py], j) => (j ? t.lineTo(px + ox, py + oy) : t.moveTo(px + ox, py + oy))); t.stroke(); } }); }
+  speckle(h, size, 4000, 1.0, 0.35, rand, false);
   const map = new THREE.CanvasTexture(c), bump = new THREE.CanvasTexture(b);
-  map.colorSpace = THREE.SRGBColorSpace;
+  map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 4;
   for (const t of [map, bump]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
   return { map, bump };
 }

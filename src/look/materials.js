@@ -8,7 +8,7 @@ export function createMaterials() {
   stone.map.repeat.set(6, 6); stone.bump.repeat.set(6, 6);
   return {
     // wet skin: dark blood-red under a clearcoat, so a candle gives a small hard highlight and a warm sheen on the lumps
-    skin: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 3.2, color: 0x7c5c54, roughness: 0.7, sheen: 0.3, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xb04024), clearcoat: 0.28, clearcoatRoughness: 0.32 }),
+    skin: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 4.5, color: 0xa07068, roughness: 0.46, sheen: 0.35, sheenRoughness: 0.4, sheenColor: new THREE.Color(0xb04024), clearcoat: 0.85, clearcoatRoughness: 0.16 }),   // wet: a hard little highlight on every pebble and tendon
     skinDark: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 1.2, color: 0x6a4040, roughness: 0.45, sheen: 0.4, sheenColor: new THREE.Color(0xa03020), clearcoat: 0.7, clearcoatRoughness: 0.2 }),
     horn: new THREE.MeshPhysicalMaterial({ color: 0x1a1410, roughness: 0.42, clearcoat: 0.7, clearcoatRoughness: 0.3, bumpMap: skin.bump, bumpScale: 0.8 }),
     bone: new THREE.MeshPhysicalMaterial({ color: 0x8a7656, roughness: 0.68, clearcoat: 0.05, clearcoatRoughness: 0.6, bumpMap: skin.bump, bumpScale: 0.6 }),
@@ -20,7 +20,7 @@ export function createMaterials() {
     wax,
     stone: new THREE.MeshStandardMaterial({ map: stone.map, bumpMap: stone.bump, bumpScale: 2.5, roughness: 0.9, color: 0x8a8a90 }),
     stoneWall: new THREE.MeshStandardMaterial({ color: 0x3a322c, roughness: 0.95 }),
-    eye: new THREE.MeshStandardMaterial({ color: 0x200000, emissive: 0xff3010, emissiveIntensity: 6 }),   // glows, so the candlelit dark shows the eyes first
+    eye: new THREE.MeshStandardMaterial({ color: 0x200000, emissive: 0xff3010, emissiveIntensity: 9 }),   // glows, so the candlelit dark shows the eyes first
     ember: new THREE.MeshStandardMaterial({ color: 0x200400, emissive: 0xff6a20, emissiveIntensity: 4 }),
   };
 }

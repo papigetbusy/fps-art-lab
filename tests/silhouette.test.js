@@ -44,3 +44,21 @@ test('A dark figure on a black background becomes a mask, and the orange floor g
   put(4, 3, 90, 20, 30); put(4, 9, 80, 55, 25);                       // skin in the body, glow at the floor
   const m = maskFromFigure(px, w, h); assert.equal(m.data[3 * w + 4], 1); assert.equal(m.data[9 * w + 4], 0);
 });
+
+// ---- Step 6b: the solid outline
+import { solidify, figureMask } from '../tools/lib/silhouette.js';
+test('A solid outline fills holes inside a shape but keeps the empty space outside it', () => {
+  const w = 20, h = 20, data = new Uint8Array(w * h);
+  for (let y = 4; y < 16; y++) for (let x = 4; x < 16; x++) data[y * w + x] = 1;
+  data[10 * w + 10] = 0;                                  // a pin-hole in the middle
+  const out = solidify({ w, h, data }, 1);
+  assert.equal(out.data[10 * w + 10], 1);
+  assert.equal(out.data[1 * w + 1], 0);
+});
+test('The figure outline counts dark red skin as the figure and plain dark grey as the background', () => {
+  const w = 12, h = 12, rgba = new Uint8ClampedArray(w * h * 4);
+  for (let i = 0; i < w * h; i++) { const inside = (i % w) > 3 && (i % w) < 8 && Math.floor(i / w) > 2 && Math.floor(i / w) < 9; rgba.set(inside ? [14, 4, 2, 255] : [15, 15, 15, 255], i * 4); }
+  const m = figureMask(rgba, w, h, { floorFrom: 2 });
+  assert.equal(m.data[5 * w + 5], 1);
+  assert.equal(m.data[0], 0);
+});

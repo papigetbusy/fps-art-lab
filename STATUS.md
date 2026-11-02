@@ -8,6 +8,7 @@
 | 4 Candle-lit chapel + picture sheet | ✅ approved, on main |
 | 5 Parts kit | ✅ approved, on main (owner: head still looked like a dog, fixed in Step 6) |
 | 6 Horned Fiend v1 | ✅ approved, on main (silhouette best front 0.53 / side 0.40, below the 0.80 goal; owner accepted) |
+| 6b Horned Fiend 1:1 match | ⛔ NOT DONE. Checkpoint pushed on `claude/step-6b-fiend-match`; real scores front 0.776 / side 0.715 / three 0.683, gate not met (see `previews/horned_fiend/rounds.md`). Do not approve or merge. |
 | 7–10 | Then Phase 1 finishes (idle, glb, look-lock pick, JSR player, perf baseline) |
 | Phases 2–7 | Monsters one by one → terrain/doors/levels → guns + shooting FX → everything else → arena proof → Crimson port. Full checklist: **`docs/FULL-ROADMAP.md`** |
 

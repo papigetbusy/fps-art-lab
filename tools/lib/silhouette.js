@@ -87,3 +87,40 @@ export function keepLargest(m, minFrac = 0.01) {
   for (let i = 0; i < w * h; i++) if (label[i] && sizes[label[i]] >= big * minFrac) out[i] = 1;
   return { w, h, data: out };
 }
+
+// ---- Step 6b: a more faithful outline of the painted turnaround figure.
+// The first mask (maskFromFigure) only kept bright pixels, so dark legs and hooves vanished and the body was full of holes, which made every
+// score unfairly low. This one counts dark-red skin and brown hooves as figure, closes pin-holes and fills the inside, so it is a solid outline.
+
+// Solid copy of a mask: closes gaps of `r` pixels, then fills every hole that does not touch the picture edge.
+export function solidify(m, r = 2) {
+  const { w, h } = m;
+  // square grow/shrink done as a horizontal pass then a vertical pass (same result as a full square window, much faster)
+  const grow = (src, rad, v) => {
+    const tmp = new Uint8Array(w * h), o = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let hit = 0; for (let dx = -rad; dx <= rad; dx++) { const xx = x + dx; if (xx >= 0 && xx < w && src[y * w + xx] === v) { hit = 1; break; } } tmp[y * w + x] = hit ? v : 1 - v; }
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let hit = 0; for (let dy = -rad; dy <= rad; dy++) { const yy = y + dy; if (yy >= 0 && yy < h && tmp[yy * w + x] === v) { hit = 1; break; } } o[y * w + x] = hit ? v : 1 - v; }
+    return o;
+  };
+  const dil = grow(m.data, r, 1), closed = grow(dil, r, 0);                  // dilate, then erode: a closing
+  const out = new Uint8Array(closed), seen = new Uint8Array(w * h), stack = [];
+  const push = (x, y) => { const i = y * w + x; if (!closed[i] && !seen[i]) { seen[i] = 1; stack.push(i); } };
+  for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); } for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+  while (stack.length) { const p = stack.pop(), x = p % w, y = (p - x) / w; if (x > 0) push(x - 1, y); if (x < w - 1) push(x + 1, y); if (y > 0) push(x, y - 1); if (y < h - 1) push(x, y + 1); }
+  for (let i = 0; i < w * h; i++) if (!closed[i] && !seen[i]) out[i] = 1;     // enclosed background = inside the figure
+  return { w, h, data: out };
+}
+
+// rgba of one view cut from the turnaround. `floorFrom` (0..1 of the height) is where the orange floor glow starts; `exclude` = rectangles [x0,y0,x1,y1]
+// (in this crop) that belong to a neighbouring figure and are ignored.
+export function figureMask(rgba, w, h, { floorFrom = 0.84, exclude = [] } = {}) {
+  const data = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (exclude.some(([a, b, c, d]) => x >= a && x < c && y >= b && y < d)) continue;
+    const i = (y * w + x) * 4, r = rgba[i], g = rgba[i + 1], b = rgba[i + 2], light = (r + g + b) / 3, floor = y / h > floorFrom;
+    const skin = r >= 7 && (r - g) >= 3 && g < r * (floor ? 0.45 : 0.62) && b < r * 0.7;       // dark red skin, even when it is darker than the background grey
+    const hoof = floor && light > 38 && b / Math.max(r, 1) > 0.5;                              // brown-grey hooves against the orange glow
+    data[y * w + x] = skin || hoof || (!floor && light > 28) ? 1 : 0;
+  }
+  return solidify(keepLargest({ w, h, data }, 0.02), 2);
+}
