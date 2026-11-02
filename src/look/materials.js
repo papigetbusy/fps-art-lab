@@ -1,22 +1,26 @@
 // Material roles shared by every creature and prop: one gothic look, no per-model one-offs. Realistic PBR, no toon.
+// Tuned for candle light: skin is wet (warm sheen and a tight highlight), horn and claw are glossy black, gold is aged, cloth is rotten.
 import * as THREE from 'three';
-import { demonSkin, flagstones } from './textures.js';
+import { demonSkin, flagstones, rottenCloth, waxTexture } from './textures.js';
 
 export function createMaterials() {
-  const skin = demonSkin(), stone = flagstones();
+  const skin = demonSkin(), stone = flagstones(), rot = rottenCloth(), wax = waxTexture();
   stone.map.repeat.set(6, 6); stone.bump.repeat.set(6, 6);
   return {
-    skin: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 1.2, roughness: 0.62, sheen: 0.35, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xd05a40), clearcoat: 0.15, clearcoatRoughness: 0.6 }),
-    skinDark: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 1.2, color: 0x6a5050, roughness: 0.7, sheen: 0.3, sheenColor: new THREE.Color(0xa03020) }),
-    horn: new THREE.MeshPhysicalMaterial({ color: 0x1c1612, roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.35 }),
-    bone: new THREE.MeshStandardMaterial({ color: 0xb8a888, roughness: 0.55 }),
-    claw: new THREE.MeshPhysicalMaterial({ color: 0x0e0b0a, roughness: 0.25, clearcoat: 0.8 }),
-    gold: new THREE.MeshStandardMaterial({ color: 0xb8893a, metalness: 1, roughness: 0.34 }),
-    iron: new THREE.MeshStandardMaterial({ color: 0x2a2624, metalness: 0.85, roughness: 0.45 }),
-    cloth: new THREE.MeshStandardMaterial({ color: 0x4a0a10, roughness: 0.92, side: THREE.DoubleSide }),
+    // wet skin: dark blood-red under a clearcoat, so a candle gives a small hard highlight and a warm sheen on the lumps
+    skin: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 3.2, color: 0x7c5c54, roughness: 0.7, sheen: 0.3, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xb04024), clearcoat: 0.28, clearcoatRoughness: 0.32 }),
+    skinDark: new THREE.MeshPhysicalMaterial({ map: skin.map, bumpMap: skin.bump, bumpScale: 1.2, color: 0x6a4040, roughness: 0.45, sheen: 0.4, sheenColor: new THREE.Color(0xa03020), clearcoat: 0.7, clearcoatRoughness: 0.2 }),
+    horn: new THREE.MeshPhysicalMaterial({ color: 0x1a1410, roughness: 0.42, clearcoat: 0.7, clearcoatRoughness: 0.3, bumpMap: skin.bump, bumpScale: 0.8 }),
+    bone: new THREE.MeshPhysicalMaterial({ color: 0xb4a07c, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.5, bumpMap: skin.bump, bumpScale: 0.6 }),
+    claw: new THREE.MeshPhysicalMaterial({ color: 0x120d0b, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.15 }),
+    gold: new THREE.MeshStandardMaterial({ color: 0xa87a32, metalness: 1, roughness: 0.4 }),            // aged: darker and rougher than polished gold
+    iron: new THREE.MeshStandardMaterial({ color: 0x2c2825, metalness: 0.9, roughness: 0.5, bumpMap: skin.bump, bumpScale: 1.2 }),
+    cloth: new THREE.MeshStandardMaterial({ map: rot.map, alphaMap: rot.alpha, alphaTest: 0.5, color: 0xffffff, roughness: 1, side: THREE.DoubleSide }),   // rotten: stained, with holes
+    gem: new THREE.MeshPhysicalMaterial({ color: 0x2a0408, emissive: 0x4a0610, emissiveIntensity: 0.9, metalness: 0.2, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.12, ior: 1.7 }),   // deep, dark garnet: a dull glow from inside, a small hard highlight on top
+    wax,
     stone: new THREE.MeshStandardMaterial({ map: stone.map, bumpMap: stone.bump, bumpScale: 2.5, roughness: 0.9, color: 0x8a8a90 }),
     stoneWall: new THREE.MeshStandardMaterial({ color: 0x3a322c, roughness: 0.95 }),
-    eye: new THREE.MeshStandardMaterial({ color: 0x200000, emissive: 0xff3010, emissiveIntensity: 6 }),
+    eye: new THREE.MeshStandardMaterial({ color: 0x200000, emissive: 0xff3010, emissiveIntensity: 6 }),   // glows, so the candlelit dark shows the eyes first
     ember: new THREE.MeshStandardMaterial({ color: 0x200400, emissive: 0xff6a20, emissiveIntensity: 4 }),
   };
 }

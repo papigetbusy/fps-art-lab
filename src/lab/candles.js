@@ -15,14 +15,6 @@ const CLUSTERS = [[-2.4, 0.6, 6], [1.9, 2.2, 6], [-1.2, 2.4, 6], [2.7, -0.3, 5],
 const DAIS_RING = { count: 9, radius: 1.18, from: -0.2, to: Math.PI + 0.2 };   // a few small candles along the back half of the dais
 const TORCH_SPOTS = [[-2.4, 1.78, 1.24], [2.4, 1.78, 1.24]];               // brazier flames (see stage.js), for embers
 
-function waxMaterial() {
-  const c = document.createElement('canvas'); c.width = 64; c.height = 128; const x = c.getContext('2d'), r = rng(5);
-  x.fillStyle = '#d9cbb0'; x.fillRect(0, 0, 64, 128);
-  for (let i = 0; i < 22; i++) { const px = r() * 64, len = 20 + r() * 80; x.fillStyle = `rgba(${r() < 0.5 ? '255,248,225' : '170,150,115'},0.35)`; x.fillRect(px, 0, 2 + r() * 4, len); }
-  const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace;
-  return new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale: 1.5, color: 0xcdbd9c, roughness: 0.5, emissive: 0x3a1a08, emissiveIntensity: 0.6 });
-}
-
 export function buildCandles(scene, M, preset, { stoneY = 0.08 } = {}) {
   const budget = preset.candle, root = new THREE.Group(); scene.add(root);
   const R = rng(11), candles = [];                     // { x, y, z, h, r, cluster }
@@ -37,7 +29,7 @@ export function buildCandles(scene, M, preset, { stoneY = 0.08 } = {}) {
     candles.push({ x: Math.cos(a) * DAIS_RING.radius, y: stoneY, z: Math.sin(a) * DAIS_RING.radius, h: 0.05 + R() * 0.1, r: 0.014 + R() * 0.006, cluster: -1 }); }
 
   // --- wax bodies: one InstancedMesh, one draw call
-  const wax = waxMaterial();
+  const wax = M.wax;
   const body = new THREE.InstancedMesh(lathe([[0, 0], [1, 0], [1.05, 0.5], [1, 0.97], [0.7, 0.985], [0.2, 0.99], [0, 0.99]], 12), wax, candles.length);
   body.castShadow = true; body.receiveShadow = true;
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new THREE.Vector3(), s = new THREE.Vector3();
@@ -98,18 +90,20 @@ export function buildCandles(scene, M, preset, { stoneY = 0.08 } = {}) {
       halos.size[i] = 0.3 * f; halos.alpha[i] = 0.1;
     });
     hazeAt.forEach((_, j) => { const i = candles.length + j; halos.size[i] = j === CLUSTERS.length ? 2.2 : 1.5; halos.alpha[i] = 0.035 * level; });
-    keyLight.intensity = 40 * level * flicker(tt, 1.1); pointLights.forEach((l, i) => { l.intensity = 4 * level * flicker(tt, 3 + i * 2.3); });
+    keyLight.intensity = keyBase * level * flicker(tt, 1.1); pointLights.forEach((l, i) => { l.intensity = 4 * level * flicker(tt, 3 + i * 2.3); });
     const eg = embers; for (let i = 0; i < eg.count; i++) { const u = (tt * (0.12 + eSeed[i] * 0.2) + eSeed[i] * 7) % 1, s0 = eSrc[i];
       eg.pos[i * 3] = s0.p[0] + Math.sin(tt * 1.3 + eSeed[i] * 20) * 0.15 * u; eg.pos[i * 3 + 1] = s0.p[1] + u * EH; eg.pos[i * 3 + 2] = s0.p[2] + Math.cos(tt * 1.1 + eSeed[i] * 17) * 0.15 * u;
       eg.size[i] = 0.02 * (1 - u * 0.6); eg.alpha[i] = (1 - u) * (s0.torch ? torchLevel : level) * 0.9; }
     for (let i = 0; i < dust.count; i++) { dust.pos[i * 3 + 1] += 0; dust.alpha[i] = 0.3 * level * (0.6 + 0.4 * Math.sin(tt * 0.7 + i)); dust.pos[i * 3] += Math.sin(tt * 0.1 + i) * 0.00005; }
     flames.touch(); halos.touch(); embers.touch(); dust.touch();
   }
-  let torchLevel = 0;
+  let torchLevel = 0, keyBase = 40;
   return {
     update, keyLight, root,
     setLevel(v) { level = v; root.visible = v > 0; keyLight.visible = v > 0; pointLights.forEach((l) => (l.visible = v > 0)); },
     setTorchLevel(v) { torchLevel = v; },
     setFlicker(on) { flickerOn = on; },
+    // a wide, stronger key for the parts board, which is 6 m wide instead of one creature
+    setWide(on) { stand.visible = !on; keyBase = on ? 75 : 40; keyLight.angle = on ? 1.2 : 0.75; keyLight.target.position.set(0, on ? 0.9 : 1.0, on ? 0.15 : 0); },
   };
 }

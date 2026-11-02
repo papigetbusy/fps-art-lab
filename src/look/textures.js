@@ -50,3 +50,24 @@ export function radial(inner = 'rgba(0,0,0,0.85)', outer = 'rgba(0,0,0,0)', size
   gr.addColorStop(0, inner); gr.addColorStop(1, outer); g.fillStyle = gr; g.fillRect(0, 0, size, size);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
+
+// rotten cloth: stained dark crimson weave with torn holes (colour map + alpha map, used with alphaTest)
+export function rottenCloth(size = 256, seed = 9) {
+  const rand = rng(seed), [c, g] = canvas(size), [a, h] = canvas(size);
+  g.fillStyle = '#3a0a0e'; g.fillRect(0, 0, size, size); h.fillStyle = '#fff'; h.fillRect(0, 0, size, size);
+  for (let i = 0; i < 160; i++) { const x = rand() * size, y = rand() * size, r = 10 + rand() * 40; const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, rand() < 0.6 ? 'rgba(10,2,2,0.5)' : 'rgba(110,70,40,0.3)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
+  g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 1; for (let i = 0; i < size; i += 4) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, size); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(size, i); g.stroke(); }
+  h.fillStyle = '#000'; for (let i = 0; i < 14; i++) { const x = rand() * size, y = rand() * size, rx = 3 + rand() * 12, ry = 3 + rand() * 12; h.beginPath(); h.ellipse(x, y, rx, ry, rand() * 3, 0, 7); h.fill(); }
+  const map = new THREE.CanvasTexture(c), alpha = new THREE.CanvasTexture(a);
+  map.colorSpace = THREE.SRGBColorSpace;
+  for (const t of [map, alpha]) t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return { map, alpha };
+}
+
+// candle wax: a pale, slightly greasy material with drip streaks (moved here from the candle code so every prop shares it)
+export function waxTexture() {
+  const rand = rng(5), [c, x] = canvas(64); c.height = 128; x.fillStyle = '#d9cbb0'; x.fillRect(0, 0, 64, 128);
+  for (let i = 0; i < 22; i++) { const px = rand() * 64, len = 20 + rand() * 80; x.fillStyle = `rgba(${rand() < 0.5 ? '255,248,225' : '170,150,115'},0.35)`; x.fillRect(px, 0, 2 + rand() * 4, len); }
+  const map = new THREE.CanvasTexture(c); map.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale: 1.5, color: 0xcdbd9c, roughness: 0.5, emissive: 0x3a1a08, emissiveIntensity: 0.6 });
+}

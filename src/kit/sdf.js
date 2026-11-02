@@ -104,7 +104,7 @@ export const rotate = (f, angles, c = [0, 0, 0]) => {
 };
 
 // ---- material roles ----
-export const ROLES = ['skin', 'skinDark', 'horn', 'bone', 'claw', 'gold', 'iron', 'cloth', 'eye', 'ember', 'stone'];
+export const ROLES = ['skin', 'skinDark', 'horn', 'bone', 'claw', 'gold', 'iron', 'cloth', 'eye', 'ember', 'stone', 'gem', 'wax'];
 // tag a shape with a material role (returns a new function, the original is untouched)
 export const withRole = (f, role) => { if (!ROLES.includes(role)) throw new Error('unknown role ' + role); const g = (p) => f(p); g.role = role; return g; };
 // which role paints point p: the role of the nearest tagged shape (used by the mesher for vertex colours / groups)
