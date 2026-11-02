@@ -1,75 +1,50 @@
-// The shared look: renderer, environment, lights. Look-only numbers live in presets.js and here.
-// Light plan: warm torch key (casts shadows), cool soft fill, crimson rim from behind, hemisphere + environment for ambient.
+// The shared look: renderer, environment, lights, presets. Look-only numbers live here.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { pickPreset } from './presets.js';
 
-export { PRESETS } from './presets.js';
+export const PRESETS = {
+  phone: { pixelRatio: 1.5, shadows: 1024, bloomScale: 0.35, fxaa: true },
+  high: { pixelRatio: 2, shadows: 2048, bloomScale: 0.5, fxaa: true },
+};
 
-// A big gradient dome instead of a flat background colour: dark at the top, a faint warm glow behind the subject.
-function createBackdrop() {
-  const mat = new THREE.ShaderMaterial({
-    side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: {
-      top: { value: new THREE.Color(0x070506) },
-      horizon: { value: new THREE.Color(0x1b100d) },
-      glow: { value: new THREE.Color(0x4a1610) },
-    },
-    vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: `uniform vec3 top; uniform vec3 horizon; uniform vec3 glow; varying vec3 vDir;
-      void main(){
-        float h = clamp(vDir.y*0.5+0.5, 0.0, 1.0);
-        vec3 c = mix(horizon, top, smoothstep(0.45, 0.95, h));
-        float g = pow(max(dot(normalize(vDir.xz + 1e-5), normalize(vec2(0.4,0.9))),0.0), 3.0) * (1.0 - smoothstep(0.5, 0.75, h));
-        gl_FragColor = vec4(c + glow*g*0.5, 1.0);
-      }`,
-  });
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), mat);
-  dome.renderOrder = -1; dome.frustumCulled = false;
-  return dome;
-}
+export const LOOK = {
+  exposure: 1.05,
+  fog: { color: 0x0e0908, density: 0.075 },
+  background: 0x0a0706,
+  envIntensity: 0.18,
+  hemi: { sky: 0x6a5a58, ground: 0x140806, intensity: 0.35 },
+  key: { color: 0xffc89a, intensity: 3.0, pos: [2.2, 4.6, -2.6] },     // warm torch key from the front-right, above
+  rim: { color: 0xff2030, intensity: 2.2, pos: [-2.6, 2.6, 3.2] },    // crimson rim from behind
+  fill: { color: 0x7088b0, intensity: 0.6, pos: [-3, 1.5, -2] },     // cool, weak fill so shadows are not black
+};
 
-export function createLook(canvasParent, presetName) {
-  const preset = pickPreset(presetName);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+export function createLook(parent, presetName) {
+  const preset = PRESETS[presetName] || PRESETS.phone;
+  const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, preset.pixelRatio));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = preset.exposure;
+  renderer.toneMappingExposure = LOOK.exposure;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  canvasParent.appendChild(renderer.domElement);
+  parent.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.add(createBackdrop());
-  scene.fog = new THREE.FogExp2(0x1a100d, 0.07);
+  scene.background = new THREE.Color(LOOK.background);
+  scene.fog = new THREE.FogExp2(LOOK.fog.color, LOOK.fog.density);
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.3;
+  scene.environmentIntensity = LOOK.envIntensity;
 
-  // ambient: cool sky, warm bounce from the stone floor
-  const hemi = new THREE.HemisphereLight(0x5a6a8a, 0x2a1208, 0.5);
-  scene.add(hemi);
-
-  // warm torch key, from the front (the creature faces -Z) and above, the only light that casts shadows
-  const key = new THREE.DirectionalLight(0xffb070, 2.6);
-  key.position.set(2.5, 4, -3);
-  key.castShadow = true;
-  key.shadow.mapSize.set(preset.shadowMap, preset.shadowMap);
-  const s = 2.6;
-  Object.assign(key.shadow.camera, { left: -s, right: s, top: s, bottom: -s, near: 0.5, far: 12 });
-  key.shadow.bias = -0.0004; key.shadow.normalBias = 0.025;
+  scene.add(new THREE.HemisphereLight(LOOK.hemi.sky, LOOK.hemi.ground, LOOK.hemi.intensity));
+  const key = new THREE.DirectionalLight(LOOK.key.color, LOOK.key.intensity);
+  key.position.set(...LOOK.key.pos); key.castShadow = true;
+  key.shadow.mapSize.set(preset.shadows, preset.shadows);
+  Object.assign(key.shadow.camera, { left: -2.5, right: 2.5, top: 3, bottom: -1, near: 0.5, far: 12 });
+  key.shadow.bias = -0.0004; key.shadow.normalBias = 0.03; key.shadow.radius = 4;
   scene.add(key);
+  const rim = new THREE.DirectionalLight(LOOK.rim.color, LOOK.rim.intensity); rim.position.set(...LOOK.rim.pos); scene.add(rim);
+  const fill = new THREE.DirectionalLight(LOOK.fill.color, LOOK.fill.intensity); fill.position.set(...LOOK.fill.pos); scene.add(fill);
 
-  // cool soft fill from the opposite side so shadows are never pure black
-  const fill = new THREE.DirectionalLight(0x6a80b0, 0.5);
-  fill.position.set(-3, 1.5, -2.5);
-  scene.add(fill);
-
-  // crimson rim from behind the creature: separates the silhouette from the dark background
-  const rim = new THREE.DirectionalLight(0xff3040, 2.2);
-  rim.position.set(-3, 2.5, 3.5);
-  scene.add(rim);
-
-  return { renderer, scene, preset, lights: { hemi, key, fill, rim } };
+  return { renderer, scene, preset, lights: { key, rim, fill } };
 }
