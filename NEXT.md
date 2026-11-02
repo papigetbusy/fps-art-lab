@@ -13,6 +13,7 @@ git checkout -b claude/step-5-parts origin/claude/step-4-candle-sheet
 (If `claude/step-5-parts` already exists locally from an earlier try, keep working on it. It was **never pushed**, so push it now.)
 
 ### Brief
+**Owner feedback (4:27 AM ET):** much better, but it needs a **scary dark feel**. Push darker: less fill, deeper shadows, colder haze outside the candle pools, wetter skin, sharper horns and claws, red eye glow. Also add `&perf=1` (fps / triangles / draw calls) if it's quick, since all later steps will use it.
 The owner wants the demon **scary**. These parts are what the Horned Fiend will be built from, so nothing cute, rounded or toy-like.
 - `src/kit/parts.js`: builders, sizes in metres, built on the Step 2 shape maths + Step 3 mesher (no voxels): `torso`, `head`, `jaw`, `horn`, `limb`, `hand`/`claw`, `hoofFoot`, `tail`, `armourPlate`, `trimBand`, `gem`, `cloth`.
   - Horns: ridged, curved, tapering to a sharp tip. Claws: long, hooked, sharp. Head/jaw: heavy brow, deep eye sockets, teeth. Limbs/torso: sinew and muscle masses, not tubes.
