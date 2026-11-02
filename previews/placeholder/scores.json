@@ -1,0 +1,9 @@
+{
+  "name": "placeholder",
+  "placeholder": true,
+  "scores": {},
+  "needs": {
+    "front": 0.8,
+    "side": 0.8
+  }
+}

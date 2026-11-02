@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { lathe } from './shapes.js';
 import { radial } from '../look/textures.js';
+import { flicker } from '../look/candle.js';
 
 export function buildStage(scene, M) {
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), M.stone);
@@ -33,8 +34,15 @@ export function buildStage(scene, M) {
   // dark back wall far behind (catches a little torch light, gives depth through the fog)
   const wall = new THREE.Mesh(new THREE.PlaneGeometry(14, 7), M.stoneWall); wall.position.set(0, 3.5, 4.5); wall.rotation.y = Math.PI; wall.receiveShadow = true; scene.add(wall);
 
+  // torch level: 0 = unlit braziers (dark coals), 1 = full torches. Set once from ?light=
+  let level = 1, flickerOn = true;
+  function setTorches(v) { level = v; for (const tr of torches) { tr.light.visible = tr.flame.visible = v > 0; } }
+  function setFlicker(on) { flickerOn = on; }
   function update(t) {
-    for (const tr of torches) { const f = 0.85 + Math.sin(t * 13 + tr.seed) * 0.06 + Math.sin(t * 7.3 + tr.seed * 2) * 0.08; tr.light.intensity = 6 * f; tr.flame.scale.set(0.45 * f, 0.75 * (0.9 + (f - 0.85)), 1); }
+    for (const tr of torches) {
+      const f = flickerOn ? flicker(t, tr.seed, 0.16) : 1;
+      tr.light.intensity = 6 * level * f; tr.flame.scale.set(0.45 * f, 0.75 * (0.9 + (f - 1) * 0.5), 1);
+    }
   }
-  return { update };
+  return { update, setTorches, setFlicker };
 }

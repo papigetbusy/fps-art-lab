@@ -1,6 +1,7 @@
 // The shared look: renderer, environment, lights, presets. Look-only numbers live here.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { applyLightMode, pickLightMode, CANDLE_BUDGET } from './candle.js';
 
 export const PRESETS = {
   phone: { pixelRatio: 1.5, shadows: 1024, bloomScale: 0.35, fxaa: true },
@@ -18,8 +19,11 @@ export const LOOK = {
   fill: { color: 0x7088b0, intensity: 0.6, pos: [-3, 1.5, -2] },     // cool, weak fill so shadows are not black
 };
 
-export function createLook(parent, presetName) {
-  const preset = PRESETS[presetName] || PRESETS.phone;
+export function createLook(parent, presetName, lightName) {
+  const preset = { ...(PRESETS[presetName] || PRESETS.phone) };
+  preset.name = PRESETS[presetName] ? presetName : 'phone';
+  preset.candle = CANDLE_BUDGET[preset.name];
+  const lightMode = pickLightMode(lightName);
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, preset.pixelRatio));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -36,7 +40,7 @@ export function createLook(parent, presetName) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = LOOK.envIntensity;
 
-  scene.add(new THREE.HemisphereLight(LOOK.hemi.sky, LOOK.hemi.ground, LOOK.hemi.intensity));
+  const hemi = new THREE.HemisphereLight(LOOK.hemi.sky, LOOK.hemi.ground, LOOK.hemi.intensity); scene.add(hemi);
   const key = new THREE.DirectionalLight(LOOK.key.color, LOOK.key.intensity);
   key.position.set(...LOOK.key.pos); key.castShadow = true;
   key.shadow.mapSize.set(preset.shadows, preset.shadows);
@@ -46,5 +50,7 @@ export function createLook(parent, presetName) {
   const rim = new THREE.DirectionalLight(LOOK.rim.color, LOOK.rim.intensity); rim.position.set(...LOOK.rim.pos); scene.add(rim);
   const fill = new THREE.DirectionalLight(LOOK.fill.color, LOOK.fill.intensity); fill.position.set(...LOOK.fill.pos); scene.add(fill);
 
-  return { renderer, scene, preset, lights: { key, rim, fill } };
+  const lights = { hemi, key, rim, fill };
+  applyLightMode({ renderer, scene, lights, base: LOOK }, lightMode);   // ?light=candle|torch|both (src/look/candle.js)
+  return { renderer, scene, preset, lights, lightMode };
 }
