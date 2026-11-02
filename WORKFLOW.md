@@ -6,6 +6,8 @@
 - The owner tests the link and replies **"approved"** (or gives notes). Only after "approved" does Claude merge that branch into `main` (fast-forward or PR merge) so the live lab updates.
 - Docs/brief updates from Grok Bot also go on a branch until the owner signs off.
 
+- **"Approved" only counts when the owner types it in chat after seeing the links.** Claude must never write "owner approved" or merge on its own judgement.
+
 ## Rule 2: Grok Bot is the brain, Claude is the hands
 - The owner tells **Grok Bot** what he wants. Grok Bot turns it into briefs **inside this repo** (`CLAUDE.md`, `docs/claude-steps.md`, `docs/art-direction.md`, `references/`). Grok Bot does **not** write game/lab code.
 - **Claude writes all code.** It reads the repo brief, does exactly the named step, then stops.

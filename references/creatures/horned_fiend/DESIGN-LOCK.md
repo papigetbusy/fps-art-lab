@@ -13,6 +13,9 @@
 - If a variant picture disagrees with the base body, **the base wins**, and only the gear shape is taken from the variant picture.
 - The only way to change the base is the owner explicitly saying so. It then gets a dated tweak-log line, and Grok Bot updates `turnaround.svg`.
 
+## Match standard (owner, 2026-11-02)
+"Match" means **1:1**: the same outline, limb widths, horn curl, face and skin read as the sheet. The silhouette must score ≥ 0.80 front and side against THIS sheet (the current file on `claude/phase-1-look-lock`). The skin is wet and sinewy, never smooth plastic. No parts that aren't on the sheet. If any check fails, it isn't done.
+
 ## Applies to every creature
 The same rules apply to every creature in `references/creatures/INDEX.md`: a base design is locked when the owner approves its sheet, then the base is frozen and variants are gear only. The owner edits drafts **before** Claude builds that monster.
 

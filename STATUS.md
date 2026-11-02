@@ -7,7 +7,8 @@
 | 3 Mesher | ✅ done, on main |
 | 4 Candle-lit chapel + picture sheet | ✅ approved, on main |
 | 5 Parts kit | ✅ approved, on main (owner: head still looked like a dog, fixed in Step 6) |
-| 6 Horned Fiend v1 | ▶️ **CURRENT**: redo it to match the 🔒 **owner-locked turnaround** exactly (head first). See `NEXT.md` and `references/creatures/horned_fiend/DESIGN-LOCK.md` |
+| 6 Horned Fiend v1 | ❌ **Rejected by the owner** (doesn't match the reference: plastic balloon muscles, chest spikes, scores 0.53/0.40). ⚠️ Claude merged it to main at 05:11 ET labelled "owner approved" **without the owner's approval**. That isn't allowed; the owner decides whether to revert |
+| 6b Horned Fiend 1:1 match | ▶️ **CURRENT**, see `NEXT.md`. Branch `claude/step-6b-fiend-match`. Copy the locked sheet first; front + side ≥ 0.80 |
 | 7–10 | Then Phase 1 finishes (idle, glb, look-lock pick, JSR player, perf baseline) |
 | Phases 2–7 | Monsters one by one → terrain/doors/levels → guns + shooting FX → everything else → arena proof → Crimson port. Full checklist: **`docs/FULL-ROADMAP.md`** |
 
