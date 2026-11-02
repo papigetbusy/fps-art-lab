@@ -7,14 +7,15 @@ The owner made Crimson Plague (a first-person horde shooter, `papigetbusy/crimso
 
 **Do not touch `crimson-plague` or `crusader-tactics` from this project.** The reskin is a later phase that the owner has to approve.
 
-## The look we want (full detail in `docs/art-direction.md`, locked by the owner)
-- **Jet Set Radio-style cel-shaded FPS.** Chunky stylised characters, hard cel bands, bold ink outlines, saturated colour, graffiti and comic effects. **Anime / JoJo's Bizarre Adventure** flavour: dramatic poses, speed lines, impact frames, menace text.
-- **Anti-cheap rules:** no voxels, no stair-steps, no realistic PBR, no soft gradient shading without outlines, no muddy scenes where enemies blend in.
-- **Combat readability first:** characters pop off the background, danger uses a reserved colour family, player effects use another.
+## The look we want (full detail in `docs/art-direction.md`, owner-locked)
+- **Realistic, polished dark-gothic FPS** for the world, lighting, monsters, guns and arenas. Readable silhouettes, believable PBR materials (stone, aged gold, horn, skin), cinematic light (ACES, sRGB, environment, warm key, crimson rim, shadows, AO, restrained bloom, grade, vignette, fog). Palette: dark stone, deep crimson, aged gold, ember glow.
+- **Only exception: player models** use a Jet Set Radio-style look (chunky cel shading, bold outlines, attitude poses). They are lit by the same scene and tuned to sit in the gothic world. No JSR, graffiti or toon look anywhere else.
+- **Anti-Roblox rules:** no voxels, no stair-steps, no flat unlit colours, no per-block colour noise, no toy proportions, no plastic everywhere.
 
 ## Tech rules
 - three.js **current release** as ES modules through the import map in each HTML page (jsDelivr). No build step needed, so Pages serves the files directly. Never use the old r128 `examples/js` globals.
-- Use `MeshToonMaterial` (3-step gradient map, nearest filter) or a small custom cel shader with a rim term, plus **inverted-hull ink outlines** on characters and guns. No realistic PBR. Colours must stay vivid on the phone (test tone mapping: none or neutral).
+- World, monsters and guns: `MeshStandardMaterial` / `MeshPhysicalMaterial` with a `RoomEnvironment` PMREM (later a CC0 Poly Haven HDRI), so materials read as metal, stone, skin or cloth.
+- Player models only: `MeshToonMaterial` (3-step gradient map) plus inverted-hull outlines, in `src/look/player_toon.js`. Never use toon/outline materials outside player models.
 - **Shapes come from code, never typed voxels:**
   - `src/kit/sdf.js` holds the shape maths: signed distance fields (tapered capsules, ellipsoids, rounded boxes, curve tubes, smooth union and subtract, mirror).
   - `src/kit/mesher.js` turns them into a mesh: Surface Nets or marching cubes, then weld, smooth normals and simplify to budget.
@@ -47,12 +48,13 @@ The owner made Crimson Plague (a first-person horde shooter, `papigetbusy/crimso
 - Log every finished piece of work as one plain line at the top of `docs/changelog.md`.
 
 ## Your first tasks (in order, each a small push)
-1. Switch the starter lab to the Jet Set Radio look with the placeholder: toon materials with a 3-band gradient map, inverted-hull outlines, a vivid sky/sunset backdrop, a simple cel ground with a graffiti decal, light bloom on emissive paint only, FXAA, phone/desktop presets. The current lab uses realistic PBR from the first scaffold: replace it. Files: `src/look/*`, `lab/main.js`.
+1. Polish the starter lab's realistic gothic look with the placeholder monster: tune ACES exposure and the colour grade, key/rim/hemi lights, soft shadows, a ground with contact shadow/AO, bloom on emissives only, vignette, fog, FXAA, and phone/desktop presets. Files: `src/look/*`, `lab/main.js`. No toon/JSR here.
 2. `src/kit/sdf.js` and its tests ("A sphere's distance is zero on its surface", "Smooth union never cuts inside either shape").
 3. `src/kit/mesher.js` (Surface Nets, weld, normals, simplify to budget) and its tests ("A sphere meshes closed and under budget").
 4. `tools/sheet.mjs`: headless render sheet (Playwright screenshots of `lab/?view=front|side|three|top`) next to the reference, plus silhouette score. Build this BEFORE any creature.
 5. `src/kit/parts.js` with named parts, plus material roles (stone, skin, horn, aged gold, ember glow).
-6. First creature, the **Horned Fiend**, redesigned in JSR style (new refs from Grok/owner preferred) (refs: copy from `crimson-plague/art-drop/monsters/fiend_*.jpg` into `references/creatures/horned_fiend/`, reading only, never editing that repo). Write the breakdown, the spec, and sheet iterations, with before/after sheets kept in `previews/`.
+6. First creature, the **Horned Fiend**, in the realistic gothic style (refs: copy from `crimson-plague/art-drop/monsters/fiend_*.jpg` into `references/creatures/horned_fiend/`, reading only, never editing that repo). Write the breakdown, the spec, and sheet iterations, with before/after sheets kept in `previews/`.
 7. Idle animation (breath, head sway, secondary motion on tail and horns), a turntable, and optional proportion sliders.
 8. `GLTFExporter` → `exports/horned_fiend_v1.glb` with rig nodes `root, torso, head, arm_l, arm_r, leg_l, leg_r, eyes, hit_head` (matches Crimson Plague's art contract for the later port).
-9. Owner review #1 → Phase 2 (tiny FPS arena, see `docs/roadmap.md`).
+9. Player model test: one Jet Set Radio-style player character (toon + outlines, `src/look/player_toon.js`) standing next to the gothic Horned Fiend in the lab, lit by the same lights, so the owner can judge the mix.
+10. Owner review #1 → Phase 2 (tiny FPS arena, see `docs/roadmap.md`).
