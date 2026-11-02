@@ -1,6 +1,6 @@
 # Claude steps: one task at a time
 
-How to use: the owner pastes **one** step's "Paste to Claude" line. Claude finishes it, pushes, and sends the link. The owner checks and says go or gives notes, then moves to the next step.
+How to use: the owner pastes **one** step's "Paste to Claude" line. Claude finishes it on its own branch, pushes **that branch only** (never `main` before the owner says "approved" — see `WORKFLOW.md`), and sends the lab test link. The owner checks and says go or gives notes, then moves to the next step.
 Style lock (`docs/art-direction.md`): **realistic dark gothic** for the world, monsters, guns and arenas. **Jet Set Radio style only for player models** (step 10). Every step follows `CLAUDE.md` (`.claude-wip.md`, plain-sentence tests, changelog line, never `git commit -a`, push only the task's files).
 
 ## Testing rule (owner, 2026-11-02)
@@ -25,7 +25,7 @@ Style lock (`docs/art-direction.md`): **realistic dark gothic** for the world, m
 - **Owner does:** checks the green tick. Nothing to look at yet.
 - **Paste to Claude:** `Read CLAUDE.md and docs/claude-steps.md in papigetbusy/fps-art-lab and do Step 2 (shape maths). Push when tests are green and tell me in two plain sentences.`
 
-### Step 3: Mesher (shapes → smooth 3D mesh)
+### ✅ Step 3: Mesher (shapes → smooth 3D mesh)
 - **Claude does:** `src/kit/mesher.js`:
   - Surface Nets (or marching cubes) over a bounded grid, welded vertices, smooth normals;
   - simplification to a triangle budget;
@@ -41,81 +41,62 @@ Style lock (`docs/art-direction.md`): **realistic dark gothic** for the world, m
 - **Owner does:** nothing. Claude reports green and checks its own screenshot; open the link only if curious.
 - **Paste to Claude:** `Do Step 3 in docs/claude-steps.md (mesher). Check the test blob at lab/?kit=test yourself and tell me when it's green.`
 
-### Step 4: Picture sheet (Claude's eyes)
-- **Claude does:** `tools/sheet.mjs`:
-  - opens `lab/?view=front|side|three|top&ui=0&still=1` headless (Playwright or Chrome `--screenshot`) and saves the 4 renders;
-  - lays them next to `references/creatures/<name>/`;
-  - adds a silhouette overlay and score;
-  - writes `previews/<name>/sheet.png` plus `previews/<name>/index.html` (phone-viewable).
-- **Done when:** `node tools/sheet.mjs placeholder` makes a sheet of the current demon, and the preview page works on GitHub Pages.
-- **Auto-test (Claude-done when):** `node tools/sheet.mjs placeholder` writes the sheet + preview page; tests green.
-- **Owner test:** **lab glance**: just confirm the 4-view sheet opens on the phone
-- **Open:** [previews/placeholder/](https://papigetbusy.github.io/fps-art-lab/previews/placeholder/)
-- **Owner does:** opens the preview link and checks you can see all 4 views clearly.
-- **Paste to Claude:** `Do Step 4 in docs/claude-steps.md (picture sheet). Run it on the current placeholder demon and send me the preview link.`
+## Remaining Phase 1 (Steps 4–10): lock the gothic candle-lit horror look
+Rules for every step below (see `WORKFLOW.md`):
+- Branch `claude/step-<n>-<name>`; push the branch only. **Do not merge to `main` until the owner says "approved".**
+- Send a **lab test link**: `https://raw.githack.com/papigetbusy/fps-art-lab/<branch>/lab/index.html?<params>` (check it renders headless first). Previews are extra.
+- Look target is **gothic candle-lit horror** (`docs/art-direction.md`): flame-lit pools, deep darkness, haze, wax, soot, embers, crimson rim. No Roblox/toy, no toon/JSR outside the player (Step 10).
+- On "approved": merge, mark ✅, changelog line.
 
-### Step 5: Named parts kit
-- **Claude does:** `src/kit/parts.js`, builders with sizes in metres: `torso`, `head`, `jaw`, `horn`, `limb`, `hand`/`claw`, `hoofFoot`, `tail`, `armourPlate`, `trimBand`, `gem`, `cloth`. Each maps to the material roles in `src/look/materials.js` (skin, horn, bone, claw, gold, iron, cloth, eye). Shows a "parts board" at `lab/?kit=parts`.
-- **Done when:** every part renders in the gothic look, and there are tests per part (budget, faces −Z, sits at origin).
-- **Auto-test (Claude-done when):** a test per part (budget, faces −Z, sits at origin); Claude reviews the parts board on its own sheet.
-- **Owner test:** **lab glance**: flag any part that looks cheap
-- **Open:** [lab/?kit=parts](https://papigetbusy.github.io/fps-art-lab/lab/?kit=parts)
-- **Owner does:** looks at the parts board and says which parts look cheap.
-- **Paste to Claude:** `Do Step 5 in docs/claude-steps.md (parts kit) and send me lab/?kit=parts.`
+### Step 4: Candle-lit chapel + picture sheet (Claude's eyes)
+- **Claude does:** turns the lab room into a **candle-lit horror chapel** (candle clusters + 1–2 torches as key lights with soft flicker, haze, wax, soot, embers; look numbers in `src/look/`). Adds `?light=candle|torch|both` and `?flicker=0`. Then `tools/sheet.mjs` (headless renders of `lab/?view=front|side|three|top&ui=0&still=1` → `previews/<name>/sheet.png` + `index.html`, references row, silhouette score).
+- **Auto-test:** tests green; `node tools/sheet.mjs placeholder` writes the sheet; phone preset steady.
+- **Owner test:** **careful human review** of the candle-lit mood (first look at the horror lighting).
+- **Lab test links:** `lab/index.html?light=candle`, `?light=both`, `?view=three&still=1`, plus `previews/placeholder/`.
+- **Paste to Claude:** `Do Step 4 in docs/claude-steps.md on branch claude/step-4-candle-sheet. Don't merge to main. Send me the lab test links.`
 
-### Step 6: Horned Fiend v1
-- **Needs first:** Horned Fiend reference pictures in `references/creatures/horned_fiend/` (front, side, back, details) in the realistic gothic style from Grok or the owner. As a stopgap, Claude may copy the old `crimson-plague/art-drop/monsters/fiend_*.jpg` (read only).
-- **Claude does:**
-  - writes `docs/creatures/horned_fiend.md` (part table, proportions in head-heights);
-  - writes `src/kit/creatures/horned_fiend.js` as DATA;
-  - runs the picture-sheet loop (render → 3 notes → fix) at least 3 rounds, keeping before/after sheets;
-  - replaces the placeholder in the lab (the placeholder stays reachable at `?creature=placeholder`).
-- **Done when:**
-  - silhouette match ≥ 0.80 front and side;
-  - ≤ 8k triangles;
-  - phone stays smooth;
-  - the sheets are published.
-- **Auto-test (Claude-done when):** silhouette ≥ 0.80 front and side, ≤ 8k tris, ≥ 3 sheet rounds logged, tests green.
-- **Owner test:** **careful human review** (small details: proportions, horns, face, hands, materials)
-- **Open:** [lab/?view=front](https://papigetbusy.github.io/fps-art-lab/lab/?view=front), [lab/?view=side](https://papigetbusy.github.io/fps-art-lab/lab/?view=side), [lab/?view=three](https://papigetbusy.github.io/fps-art-lab/lab/?view=three), [lab/ (spin)](https://papigetbusy.github.io/fps-art-lab/lab/), [previews/horned_fiend/](https://papigetbusy.github.io/fps-art-lab/previews/horned_fiend/)
-- **Owner does:** opens the lab and the sheets and gives 1–3 notes (proportions, horns, mood).
-- **Paste to Claude:** `Do Step 6 in docs/claude-steps.md (Horned Fiend v1) using the references in references/creatures/horned_fiend. Show me the sheets before and after.`
+### Step 5: Named parts kit (gothic horror materials)
+- **Claude does:** `src/kit/parts.js` builders (torso, head, jaw, horn, limb, hand/claw, hoofFoot, tail, armourPlate, trimBand, gem, cloth) mapped to material roles (wet skin, horn, bone, claw, aged gold, iron, rotting cloth, eye glow, wax). Parts board at `lab/?kit=parts` under candlelight.
+- **Auto-test:** per-part tests (budget, faces −Z, origin); Claude reviews its own sheet.
+- **Owner test:** **lab glance**: flag anything cheap/plastic.
+- **Lab test link:** `lab/index.html?kit=parts&light=candle`
+- **Paste to Claude:** `Do Step 5 in docs/claude-steps.md on branch claude/step-5-parts. Don't merge to main. Send me the lab test link.`
 
-### Step 7: Idle animation + rig + turntable polish
-- **Claude does:** rig nodes (`root, torso, head, jaw, arm_l, arm_r, leg_l, leg_r, tail, eyes, hit_head`); idle with weight (breath, head look, shoulder roll, tail follow-through, claw flex); optional proportion sliders (`?sliders=1`).
-- **Done when:** the idle feels heavy and alive, not floaty, and the rig test passes.
-- **Auto-test (Claude-done when):** rig test green (every node present, every pose runs).
-- **Owner test:** **careful human review** (does the idle feel heavy and alive?)
-- **Open:** [lab/ (spin) and lab/?sliders=1](https://papigetbusy.github.io/fps-art-lab/lab/)
-- **Owner does:** watches it spin on the phone and gives notes.
-- **Paste to Claude:** `Do Step 7 in docs/claude-steps.md (idle animation and rig) and send me the lab link.`
+### Step 6: Horned Fiend v1 (candle-lit horror)
+- **Needs first:** refs in `references/creatures/horned_fiend/` (Grok supplies; stopgap: old `crimson-plague/art-drop/monsters/fiend_*.jpg`, read only, noted as stopgap).
+- **Claude does:** `docs/creatures/horned_fiend.md` + `src/kit/creatures/horned_fiend.js` as DATA; ≥ 3 sheet rounds (render → 3 notes → fix); fiend tuned to be revealed by candlelight (eyes glow, rim, wet skin). Placeholder stays at `?creature=placeholder`.
+- **Auto-test:** silhouette ≥ 0.80 front/side, ≤ 8k tris, ≥ 3 rounds logged, tests green.
+- **Owner test:** **careful human review** (proportions, horns, face, hands, materials, scariness).
+- **Lab test links:** `lab/index.html?creature=horned_fiend`, `&view=front`, `&view=side`, `&view=three`, plus `previews/horned_fiend/`.
+- **Paste to Claude:** `Do Step 6 in docs/claude-steps.md on branch claude/step-6-horned-fiend using references/creatures/horned_fiend. Don't merge to main. Send me the lab test links and before/after sheets.`
+
+### Step 7: Idle animation + rig
+- **Claude does:** rig nodes (`root, torso, head, jaw, arm_l, arm_r, leg_l, leg_r, tail, eyes, hit_head`); heavy, creepy idle (breath, slow head turn toward camera, shoulder roll, tail follow-through, claw flex); `?sliders=1` proportion sliders; candle flicker plays over it.
+- **Auto-test:** rig test green (all nodes, all poses run).
+- **Owner test:** **careful human review** (heavy, alive, unsettling — not floaty).
+- **Lab test links:** `lab/index.html?creature=horned_fiend&anim=idle`, `&sliders=1`
+- **Paste to Claude:** `Do Step 7 in docs/claude-steps.md on branch claude/step-7-idle-rig. Don't merge to main. Send me the lab test links.`
 
 ### Step 8: Export .glb
-- **Claude does:** `GLTFExporter` (button plus node script) → `exports/horned_fiend_v1.glb` with the rig nodes, matching Crimson Plague's art contract (origin at the feet, faces −Z, metres). A test checks the node names.
-- **Done when:** the file loads back in the lab from the `.glb` and looks the same.
-- **Auto-test (Claude-done when):** .glb export test green (node names, origin, facing); the re-loaded model matches.
-- **Owner test:** **none**
-- **Open:** nothing to open
-- **Owner does:** nothing but the green tick.
-- **Paste to Claude:** `Do Step 8 in docs/claude-steps.md (export the Horned Fiend as .glb).`
+- **Claude does:** `GLTFExporter` → `exports/horned_fiend_v1.glb` (rig nodes, origin at feet, faces −Z, metres); lab can load it back.
+- **Auto-test:** export test green (node names, origin, facing).
+- **Owner test:** **lab glance** (optional): the reloaded .glb looks the same.
+- **Lab test link:** `lab/index.html?creature=horned_fiend&src=glb`
+- **Paste to Claude:** `Do Step 8 in docs/claude-steps.md on branch claude/step-8-glb. Don't merge to main. Send me the lab test link.`
 
-### Step 9: Style-lock variants (gothic)
-- **Claude does:** `lab/?variant=A|B|C`, three takes on the same fiend and room (for example A: darker and foggier; B: more contrast and gold; C: colder stone with hotter embers). Only look numbers in `src/look/` change. Adds a side-by-side page `previews/variants/`.
-- **Done when:** the variant page works on the phone.
-- **Auto-test (Claude-done when):** all 3 variants render; comparison page live.
-- **Owner test:** **careful human review**: you pick the look (style lock)
-- **Open:** [lab/?variant=A](https://papigetbusy.github.io/fps-art-lab/lab/?variant=A), [lab/?variant=B](https://papigetbusy.github.io/fps-art-lab/lab/?variant=B), [lab/?variant=C](https://papigetbusy.github.io/fps-art-lab/lab/?variant=C), [previews/variants/](https://papigetbusy.github.io/fps-art-lab/previews/variants/)
-- **Owner does:** **picks one** (or mixes: "A's fog with B's gold"). Claude writes the pick into `docs/art-direction.md` as the locked values.
-- **Paste to Claude:** `Do Step 9 in docs/claude-steps.md (three gothic look variants) and send me the comparison page.`
+### Step 9: Style-lock variants (candle-lit horror)
+- **Claude does:** `lab/?variant=A|B|C`, same fiend and chapel, look numbers only (e.g. A: darkest, few candles, heavy haze; B: many candles, more gold glints; C: cold moon fill + hot candle pools). Side-by-side `previews/variants/`.
+- **Auto-test:** all 3 render; comparison page works.
+- **Owner test:** **careful human review — you pick the locked look** (or a mix). Claude writes the pick into `docs/art-direction.md`.
+- **Lab test links:** `lab/index.html?variant=A`, `?variant=B`, `?variant=C`, plus `previews/variants/`.
+- **Paste to Claude:** `Do Step 9 in docs/claude-steps.md on branch claude/step-9-variants. Don't merge to main. Send me the three lab test links.`
 
-### Step 10: Jet Set Radio player model test (player only)
-- **Claude does:** `src/look/player_toon.js` (toon material plus outlines, used ONLY for players) and one placeholder JSR-style player character (chunky shoes and gloves, attitude pose) standing next to the gothic fiend, lit by the same lights. Two variants (outline thickness and colour). Nothing else in the scene goes toon.
-- **Done when:** the player reads clearly and doesn't look pasted on; the fiend and room are unchanged.
-- **Auto-test (Claude-done when):** toon/outline used only on the player (test checks no toon material on the world or monsters).
-- **Owner test:** **careful human review**: does the JSR player fit next to the gothic fiend?
-- **Open:** [lab/?player=1 (variants: &pv=1](https://papigetbusy.github.io/fps-art-lab/lab/?player=1),  &pv=2)
-- **Owner does:** approves the mix or gives notes. **End of Phase 1 = owner review.**
-- **Paste to Claude:** `Do Step 10 in docs/claude-steps.md (Jet Set Radio-style player next to the gothic fiend, player only).`
+### Step 10: Jet Set Radio player next to the fiend (player only)
+- **Claude does:** `src/look/player_toon.js` (toon + outline, players ONLY) and one placeholder JSR-style player beside the fiend in the locked candle-lit chapel, lit by the same candles. Two variants (outline thickness/colour). Nothing else goes toon.
+- **Auto-test:** test proves no toon material on world/monsters.
+- **Owner test:** **careful human review**: does the JSR player fit the candle-lit horror world? **End of Phase 1.**
+- **Lab test links:** `lab/index.html?player=1&pv=1`, `?player=1&pv=2`
+- **Paste to Claude:** `Do Step 10 in docs/claude-steps.md on branch claude/step-10-player. Don't merge to main. Send me the lab test links.`
 
 ---
 

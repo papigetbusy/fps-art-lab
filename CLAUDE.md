@@ -1,5 +1,8 @@
 # Claude brief: FPS Art Lab
 
+> **Read `WORKFLOW.md` first (owner-locked).** (1) Never push/merge feature or lab code to `main` without the owner's "approved" — work on `claude/step-<n>-<name>` branches and send a branch **lab test link**. (2) Grok Bot writes your briefs in this repo; you write the code.
+> **Look lock (Phase 1): gothic candle-lit horror** — see `docs/art-direction.md`.
+
 You are the code half of this project. The owner is not a programmer: explain in plain language, one sentence per choice. He checks work on his iPhone (held sideways) through the GitHub Pages link and the green tick.
 
 ## Why this project exists
@@ -43,9 +46,9 @@ The owner made Crimson Plague (a first-person horde shooter, `papigetbusy/crimso
 
 ## Working rules
 - Start of every turn: `git status`, read `.claude-wip.md` if it exists. Before your first edit on a task, write `.claude-wip.md` (the request in the owner's words, the plan as `- [ ]` steps). Delete it when the push is green.
-- Never `git commit -a`. Add only this task's files. Commit messages in plain words. Push only when the owner asked for the work.
+- Never `git commit -a`. Add only this task's files. Commit messages in plain words. Push only your step branch (`claude/step-<n>-<name>`), never `main`, until the owner says "approved" (see `WORKFLOW.md`). Every step ends with a lab test link.
 - Work only on the current phase in `docs/roadmap.md`.
 - Log every finished piece of work as one plain line at the top of `docs/changelog.md`.
 
 ## Your tasks
-The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Steps 1 (gothic lab polish) and 2 (shape maths) are done; next is Step 3. Do only the step the owner asks for, then stop and send the link.
+The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Steps 1–3 are done. Next is Step 4. Remaining Phase 1 steps (4–10) lock the **gothic candle-lit horror** look. Do only the step the owner asks for, on its own branch, then stop and send the lab test link.
