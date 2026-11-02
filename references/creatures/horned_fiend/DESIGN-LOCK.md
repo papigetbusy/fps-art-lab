@@ -13,6 +13,9 @@
 - If a variant picture disagrees with the base body, **the base wins**, and only the gear shape is taken from the variant picture.
 - The only way to change the base is the owner explicitly saying so. It then gets a dated tweak-log line, and Grok Bot updates `turnaround.svg`.
 
+## Applies to every creature
+The same rules apply to every creature in `references/creatures/INDEX.md`: a base design is locked when the owner approves its sheet, then the base is frozen and variants are gear only. The owner edits drafts **before** Claude builds that monster.
+
 ## Variants of the SAME locked fiend (not new creatures)
 - **Armored elite** (`armored` affix): `variant-armored.svg` (v2). **Demonic armour**, not plain plate: blackened iron with jagged spikes, hooked barbs and thorn ridges; a ribcage-shaped chest plate; horned-skull shoulder pauldrons with curved spikes; clawed vambraces; spiked knee guards; barbed tail plates; molten red-orange cracks and infernal runes in the metal; dull aged-gold edges.
   - **Feet:** armoured foot-guards shaped like a human foot (heel, arch, toe section) strapped over the frozen hooves, with the cloven hoof tips still showing at the front. This is gear over the base feet; the base legs and hooves underneath don't change.

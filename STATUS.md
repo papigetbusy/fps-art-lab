@@ -13,6 +13,9 @@
 
 **Look lock:** gothic candle-lit horror. The demon must be scary. Jet Set Radio style is for the player model only (Step 10).
 
+## Creature references
+One turnaround sheet per creature in `references/creatures/` (see `INDEX.md`). Horned Fiend is 🔒 locked; the 11 others are 📝 drafts for the owner to edit. A creature's base gets locked when the owner approves its sheet, and variants are gear only. **Claude uses a sheet only when that creature's step is in `NEXT.md`.**
+
 ## How it runs
 1. The owner tells Claude: "go to the repo." Claude reads `CLAUDE.md` → `STATUS.md` → `NEXT.md`.
 2. Claude does only the `NEXT.md` step on its step branch, pushes **that branch only**, sends the lab links listed in `NEXT.md`, and stops.
