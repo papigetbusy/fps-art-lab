@@ -3,4 +3,4 @@ Put reference pictures per subject: `creatures/<name>/front.jpg, side.jpg, back.
 Grok or the owner provide these. Claude reads them for the render-sheet comparison and never treats a placeholder as final art.
 
 ## Style references
-`style/`: screenshots the owner loves (Jet Set Radio characters, anime, JoJo poses and effects), each with a one-line note on what to take from it. These steer the look; don't copy them.
+`style/gothic/`: realistic dark-gothic mood shots (lighting, materials, monsters, guns). `style/player-jsr/`: Jet Set Radio character shots for player models only. Add one line per picture on what to take from it. These steer the look; don't copy them.
