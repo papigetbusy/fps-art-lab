@@ -1,5 +1,7 @@
 # Roadmap
 
+> **Master checklist with all phases, the Crimson inventory and perf budgets: `docs/FULL-ROADMAP.md`.** It replaces Phases 2–4 below, which are kept for history.
+
 **Style (owner-locked 2026-11-02):** realistic polished dark gothic for the world, monsters, guns and arenas. **Player models only** in Jet Set Radio style. See `docs/art-direction.md`.
 
 ## Phase 1: Turntable creature lab (CURRENT)
