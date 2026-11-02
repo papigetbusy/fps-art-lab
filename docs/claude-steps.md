@@ -9,7 +9,7 @@ Style lock (`docs/art-direction.md`): **realistic dark gothic** for the world, m
 
 ## Phase 1: Creature lab
 
-### Step 2: Shape maths (SDF kit)
+### ✅ Step 2: Shape maths (SDF kit). Done 2026-11-02
 - **Claude does:** extends `src/kit/sdf.js`: rounded box, cone, torus, curve tube (tapered along a Catmull-Rom curve), smooth subtract and intersect, transforms (translate, rotate, scale), and a colour/material role carried per shape. Adds tests to `tests/kit.test.js`.
 - **Done when:** `node --test tests/` passes, with new plain-sentence tests such as "A curve tube is thinner at its tip" and "Smooth subtract carves an eye socket". The green tick is on GitHub.
 - **Owner does:** checks the green tick. Nothing to look at yet.

@@ -48,4 +48,4 @@ The owner made Crimson Plague (a first-person horde shooter, `papigetbusy/crimso
 - Log every finished piece of work as one plain line at the top of `docs/changelog.md`.
 
 ## Your tasks
-The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Step 1 (gothic lab polish) is done. Do only the step the owner asks for, then stop and send the link.
+The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Steps 1 (gothic lab polish) and 2 (shape maths) are done; next is Step 3. Do only the step the owner asks for, then stop and send the link.

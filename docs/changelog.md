@@ -1,4 +1,5 @@
 # Changelog (newest first)
+- 2026-11-02 · Grok · Step 2: shape maths kit in src/kit/sdf.js (rounded box, cone, torus, curve tube for horns and tails, hard and smooth union/subtract/intersect, move/scale/rotate, material roles) with 18 plain-sentence tests.
 - 2026-11-02 · Grok · Step-by-step Claude checklist added (docs/claude-steps.md); CLAUDE.md now points to it.
 - 2026-11-02 · Grok · Task 1: lab look polished to realistic dark gothic. Torch-lit chapel corner (flagstones, dais with gold ring, fluted pillars, flickering braziers), warm key + crimson rim + cool fill, soft shadows, contact shadow, bloom on embers and eyes only, crimson/gold grade, vignette, grain, FXAA, phone/high presets, and a horned demon placeholder (digitigrade legs, ram horns, claws, iron and gold pauldron, loincloth, tail) with an idle animation. ?still=1 added for render sheets.
 - 2026-11-02 · Grok · Style corrected by the owner: back to realistic dark gothic for everything; Jet Set Radio style is for player models only.
