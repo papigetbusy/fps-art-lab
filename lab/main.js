@@ -1,7 +1,7 @@
 // Phase 1 lab: a turntable for one creature in the realistic dark-gothic look.
 // The demon is a LAB PLACEHOLDER (src/lab/fiend_placeholder.js), only to judge lights, materials and post.
 // Claude replaces it with the SDF-kit creature (CLAUDE.md tasks 2-7).
-// URL options: ?view=front|side|three|top (fixed camera, for render sheets), ?ui=0 (hide buttons), ?preset=phone|high, ?still=1 (no animation).
+// URL options: ?view=front|side|three|top (fixed camera, for render sheets), ?ui=0 (hide buttons), ?preset=phone|high, ?still=1 (no animation), ?kit=test (mesher test blob).
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createLook } from '../src/look/renderer.js';
@@ -9,6 +9,7 @@ import { createMaterials } from '../src/look/materials.js';
 import { createPost } from '../src/look/post.js';
 import { buildFiend } from '../src/lab/fiend_placeholder.js';
 import { buildStage } from '../src/lab/stage.js';
+import { buildKitTest } from '../src/lab/kit_blob_view.js';
 
 const params = new URLSearchParams(location.search);
 const presetName = params.get('preset') || (matchMedia('(pointer:coarse)').matches ? 'phone' : 'high');
@@ -18,7 +19,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 1.15, 0); controls.enableDamping = true; controls.minDistance = 1.5; controls.maxDistance = 9; controls.maxPolarAngle = Math.PI * 0.55;
 const M = createMaterials();
 const stage = buildStage(scene, M);
-const fiend = buildFiend(M);
+const fiend = params.get('kit') === 'test' ? buildKitTest(M) : buildFiend(M);   // ?kit=test shows the Step 3 mesher test blob instead
 fiend.root.position.y = 0.08;              // standing on the dais
 scene.add(fiend.root);
 
