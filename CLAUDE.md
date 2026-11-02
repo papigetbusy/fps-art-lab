@@ -51,4 +51,4 @@ The owner made Crimson Plague (a first-person horde shooter, `papigetbusy/crimso
 - Log every finished piece of work as one plain line at the top of `docs/changelog.md`.
 
 ## Your tasks
-The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Steps 1–3 are done. Next is Step 4. Remaining Phase 1 steps (4–10) lock the **gothic candle-lit horror** look. Do only the step the owner asks for, on its own branch, then stop and send the lab test link.
+The ordered, one-at-a-time checklist is **`docs/claude-steps.md`**. Steps 1–3 are done. Step 4 is built on `claude/step-4-candle-sheet` and waiting for the owner's "approved" (not merged). Next is Step 5 on `claude/step-5-parts`, stacked on the Step 4 branch. Remaining Phase 1 steps (4–10) lock the **gothic candle-lit horror** look. Do only the step the owner asks for, on its own branch, then stop and send the lab test link.
