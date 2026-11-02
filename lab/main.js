@@ -4,18 +4,22 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createLook } from '../src/look/renderer.js';
 import { createMaterials } from '../src/look/materials.js';
+import { createGround } from '../src/look/ground.js';
 import { createPost } from '../src/look/post.js';
 
 const params = new URLSearchParams(location.search);
-const { renderer, scene } = createLook(document.body, params.get('preset') || (matchMedia('(pointer:coarse)').matches ? 'phone' : 'high'));
+const presetName = params.get('preset') || (matchMedia('(pointer:coarse)').matches ? 'phone' : 'high');
+const { renderer, scene, preset, lights } = createLook(document.body, presetName);
 const camera = new THREE.PerspectiveCamera(35, 1, 0.05, 50);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 1.1, 0); controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI * 0.495; controls.minDistance = 1.5; controls.maxDistance = 9;
 const M = createMaterials();
 
-// ground: dark stone disc with a soft contact shadow
-const ground = new THREE.Mesh(new THREE.CircleGeometry(3, 64), M.stone);
-ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+// ground: dark flagstone disc with a soft contact shadow under the feet
+const ground = createGround({ radius: 3.4, textureSize: preset.groundTexture });
+ground.setContactShadow(1.1, 0.7);
+scene.add(ground);
 
 // placeholder creature (rounded primitives, real materials), 2.2 m tall, faces -Z
 const creature = new THREE.Group(); scene.add(creature);
@@ -39,15 +43,22 @@ setView(params.get('view') || 'three'); if (!params.get('view')) spin = true;
 document.querySelectorAll('#ui button').forEach((b) => b.onclick = () => setView(b.dataset.v));
 if (params.get('ui') === '0') document.getElementById('ui').style.display = 'none';
 
-const composer = createPost(renderer, scene, camera);
-function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+const composer = createPost(renderer, scene, camera, preset);
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h);
+  composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
 addEventListener('resize', resize); resize();
 
+const keyBase = lights.key.intensity;
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   const t = clock.getElapsedTime();
   if (spin) creature.rotation.y = t * 0.4;
   torso.scale.y = 1 + Math.sin(t * 1.6) * 0.015;                     // breathing
   head.rotation.y = Math.sin(t * 0.7) * 0.12; head.rotation.x = Math.sin(t * 1.1) * 0.04;
+  lights.key.intensity = keyBase * (1 + 0.03 * Math.sin(t * 9) * Math.sin(t * 2.3 + 1)); // faint torch flicker
   controls.update(); composer.render();
 });
